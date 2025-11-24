@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "QCSingleTrack.Api": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "scalar/",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:60997;http://localhost:60998"
+    }
+  }
+}

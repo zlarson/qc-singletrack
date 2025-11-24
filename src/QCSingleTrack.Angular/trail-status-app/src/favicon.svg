@@ -1,0 +1,14 @@
+<!-- Simple, clear favicon for QC SingleTrack -->
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Solid green background -->
+  <rect width="32" height="32" fill="#16a34a" rx="4"/>
+  
+  <!-- White "QC" text -->
+  <text x="16" y="12" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="white">QC</text>
+  
+  <!-- Simple trail/mountain icon -->
+  <path d="M6 20 L10 16 L14 18 L18 14 L22 16 L26 20 L26 24 L6 24 Z" fill="white" opacity="0.8"/>
+  
+  <!-- Trail line -->
+  <path d="M8 22 Q16 20 24 22" stroke="white" stroke-width="1.5" fill="none" opacity="0.9"/>
+</svg>

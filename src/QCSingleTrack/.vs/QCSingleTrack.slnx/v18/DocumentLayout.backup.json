@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\middleware\\apikeymiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\middleware\\apikeymiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1630A7F4-8529-4F00-BF29-6826FEBD56C4}|QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.domain\\currentstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -86,21 +86,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 6,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "QCSingleTrack.Api\\Properties\\launchSettings.json",
-              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Properties\\launchSettings.json",
-              "RelativeToolTip": "QCSingleTrack.Api\\Properties\\launchSettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-24T20:07:01.846Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 8,
@@ -116,13 +103,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json",
               "RelativeDocumentMoniker": "QCSingleTrack.Api\\appsettings.Development.json",
               "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json",
               "RelativeToolTip": "QCSingleTrack.Api\\appsettings.Development.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-11-24T19:42:10.387Z",
               "EditorCaption": ""
@@ -181,15 +168,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Program.cs",
               "RelativeDocumentMoniker": "QCSingleTrack.Api\\Program.cs",
               "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Program.cs",
               "RelativeToolTip": "QCSingleTrack.Api\\Program.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAACoAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAABsAAAAAAAAAAIAwwEcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-24T19:32:56.345Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "QCSingleTrack.Api\\Properties\\launchSettings.json",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Properties\\launchSettings.json",
+              "RelativeToolTip": "QCSingleTrack.Api\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-24T20:07:01.846Z",
               "EditorCaption": ""
             },
             {
