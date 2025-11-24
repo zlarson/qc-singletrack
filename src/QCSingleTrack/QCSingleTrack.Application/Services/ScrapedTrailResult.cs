@@ -1,0 +1,8 @@
+namespace QCSingleTrack.Application.Services;
+
+public class ScrapedTrailResult
+{
+    public string? TrailName { get; set; }
+    public string? Status { get; set; }
+    public string? Reason { get; set; }
+}

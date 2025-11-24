@@ -23,7 +23,7 @@ This phase establishes the non-negotiable data core using Entity Framework Core 
 
  * Database & EF Setup: Provision Azure SQL Database. Configure Dependency Injection in both Function Apps to inject the DbContext class.
  * Initial Schema: Use EF Core Migrations (Add-Migration, Update-Database) to create the initial TrailStatus table in Azure SQL.
-1.1 TrailStatus.ScraperFn (Timer Trigger - Every 10 min)
+1.1 QCSingleTrack.TrailStatusScraperFn (Timer Trigger - Every 10 min)
  * Web Scraping: Use HttpClient and the AngleSharp library (NuGet package) to fetch and parse the source website's HTML, extracting the Status and Reason.
  * Weather Integration: Use HttpClient to call a Weather API (e.g., OpenWeatherMap) using the stored Latitude and Longitude to fetch Rain24h and CurrentTemp.
  * Database Write: Use the injected DbContext to update the corresponding trail entry with the new Status, Reason, LastScrapedTime, and all weather metrics.

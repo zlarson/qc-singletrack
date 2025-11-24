@@ -1,0 +1,13 @@
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using QCSingleTrack.Domain;
+
+namespace QCSingleTrack.TrailStatusScraperFn.Services;
+
+public interface ITrailScraper
+{
+    /// <summary>
+    /// Scrapes the FORC site and returns a sequence of scraped results with trail name, status and reason.
+    /// </summary>
+    Task<IEnumerable<ScrapedTrailResult>> ScrapeForcAsync();
+}}

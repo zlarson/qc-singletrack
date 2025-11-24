@@ -1,0 +1,54 @@
+﻿using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using QCSingleTrack.TrailStatusScraperFn.Services;
+using QCSingleTrack.TrailStatusScraperFn.Settings;
+using QCSingleTrack.Infrastructure.Data;
+using QCSingleTrack.Application.Services;
+
+var builder = FunctionsApplication.CreateBuilder(args);
+
+builder.ConfigureFunctionsWebApplication();
+
+builder.Services
+    .AddOptions<ScraperOptions>()
+    .Configure<IConfiguration>((options, config) =>
+    {
+        config.GetSection("Scraper").Bind(options);
+    });
+
+builder.Services.AddHttpClient("ScraperClient", (sp, client) =>
+{
+    var opts = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<ScraperOptions>>().Value;
+    if (!string.IsNullOrWhiteSpace(opts.BaseUrl))
+    {
+        client.BaseAddress = new Uri(opts.BaseUrl);
+    }
+});
+
+// EF Core: register DbContextFactory using a connection string from configuration
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    // Fall back to env value used by Functions (Values section in local.settings.json)
+    connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+}
+
+builder.Services.AddDbContextFactory<TrailStatusDbContext>(options =>
+{
+    options.UseSqlServer(connectionString);
+});
+
+builder.Services.AddScoped<ITrailScraper, AngleSharpTrailScraper>();
+
+// Application layer
+builder.Services.AddScoped<ITrailService, TrailService>();
+
+builder.Services
+    .AddApplicationInsightsTelemetryWorkerService()
+    .ConfigureFunctionsApplicationInsights();
+
+builder.Build().Run();

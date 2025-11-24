@@ -1,0 +1,34 @@
+﻿using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using QCSingleTrack.TrailStatusScraperFn.Services;
+using QCSingleTrack.TrailStatusScraperFn.Settings;
+
+var builder = FunctionsApplication.CreateBuilder(args);
+
+builder.ConfigureFunctionsWebApplication();
+
+builder.Services
+    .AddOptions<ScraperOptions>()
+    .Configure<IConfiguration>((options, config) =>
+    {
+        config.GetSection("Scraper").Bind(options);
+    });
+
+builder.Services
+    .AddHttpClient("ScraperClient", (sp, client) =>
+    {
+        var opts = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<ScraperOptions>>().Value;
+        if (!string.IsNullOrWhiteSpace(opts.BaseUrl))
+        {
+            client.BaseAddress = new Uri(opts.BaseUrl);
+        }
+    })
+    .AddScoped<ITrailScraper, AngleSharpTrailScraper>();
+
+builder.Services
+    .AddApplicationInsightsTelemetryWorkerService()
+    .ConfigureFunctionsApplicationInsights();
+
+builder.Build().Run();

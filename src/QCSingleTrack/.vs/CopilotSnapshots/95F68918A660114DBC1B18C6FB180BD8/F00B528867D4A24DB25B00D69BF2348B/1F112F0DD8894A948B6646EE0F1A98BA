@@ -1,0 +1,26 @@
+﻿using System;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
+
+namespace QCSingleTrack.TrailStatusScraperFn;
+
+public class TimerScrapeFunction
+{
+    private readonly ILogger _logger;
+
+    public TimerScrapeFunction(ILoggerFactory loggerFactory)
+    {
+        _logger = loggerFactory.CreateLogger<TimerScrapeFunction>();
+    }
+
+    [Function("TimerScrapeFunction")]
+    public void Run([TimerTrigger("*/10 * * * *")] TimerInfo myTimer)
+    {
+        _logger.LogInformation("C# Timer trigger function executed at: {executionTime}", DateTime.Now);
+        
+        if (myTimer.ScheduleStatus is not null)
+        {
+            _logger.LogInformation("Next timer schedule at: {nextSchedule}", myTimer.ScheduleStatus.Next);
+        }
+    }
+}

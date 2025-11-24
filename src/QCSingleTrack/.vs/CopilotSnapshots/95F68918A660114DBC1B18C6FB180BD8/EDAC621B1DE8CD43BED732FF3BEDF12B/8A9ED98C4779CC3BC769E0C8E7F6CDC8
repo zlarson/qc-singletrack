@@ -1,0 +1,21 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using QCSingleTrack.Domain;
+
+namespace QCSingleTrack.Infrastructure.Data.Configurations;
+
+public class TrailStatusConfiguration : IEntityTypeConfiguration<TrailStatus>
+{
+    public void Configure(EntityTypeBuilder<TrailStatus> builder)
+    {
+        builder.ToTable("TrailStatuses");
+        builder.HasKey(t => t.TrailId);
+        builder.Property(t => t.TrailName).HasMaxLength(10);
+        builder.Property(t => t.Status).HasMaxLength(50);
+        builder.Property(t => t.LastScrapedTime).HasColumnType("datetime2");
+        builder.Property(t => t.Latitude).HasColumnType("decimal(9,6)");
+        builder.Property(t => t.Longitude).HasColumnType("decimal(9,6)");
+        builder.Property(t => t.Rain24h).HasColumnType("decimal(6,2)");
+        builder.Property(t => t.CurrentTemp).HasColumnType("decimal(6,2)");
+    }
+}

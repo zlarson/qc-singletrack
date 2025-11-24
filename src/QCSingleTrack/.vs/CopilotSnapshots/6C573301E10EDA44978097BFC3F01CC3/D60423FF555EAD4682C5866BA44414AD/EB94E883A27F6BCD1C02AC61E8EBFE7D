@@ -1,0 +1,33 @@
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using QCSingleTrack.Domain;
+using QCSingleTrack.Infrastructure.Data;
+
+namespace QCSingleTrack.Application.Services;
+
+public class TrailService : ITrailService
+{
+    private readonly IDbContextFactory<TrailStatusDbContext> _dbFactory;
+
+    public TrailService(IDbContextFactory<TrailStatusDbContext> dbFactory)
+    {
+        _dbFactory = dbFactory;
+    }
+
+    public async Task<Trail?> GetTrailByIdAsync(int id)
+    {
+        await using var db = _dbFactory.CreateDbContext();
+        return await db.Trails.Include(t => t.TrailStatus).FirstOrDefaultAsync(t => t.TrailId == id);
+    }
+
+    public async Task UpdateTrailStatusesAsync(IEnumerable<ScrapedTrailResult> results)
+    {
+        foreach (var result in results)
+        {
+                
+        }
+
+        throw new NotImplementedException();
+    }
+}

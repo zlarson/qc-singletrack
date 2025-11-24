@@ -1,0 +1,67 @@
+﻿using System.Net.Http;
+using System.Threading.Tasks;
+using AngleSharp;
+using AngleSharp.Html.Parser;
+using Microsoft.Extensions.Logging;
+using QCSingleTrack.Domain;
+
+namespace QCSingleTrack.TrailStatusScraperFn.Services;
+
+public class AngleSharpTrailScraper : ITrailScraper
+{
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<AngleSharpTrailScraper> _logger;
+
+    public AngleSharpTrailScraper(IHttpClientFactory httpClientFactory, ILogger<AngleSharpTrailScraper> logger)
+    {
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
+    }
+
+    public async Task<TrailStatus> ScrapeAsync(TrailStatus trail)
+    {
+        // Placeholder implementation: fetch the URL in TrailName (if it contains a URL) or do nothing.
+        // Replace with real site-specific parsing logic.
+        if (string.IsNullOrEmpty(trail.TrailName))
+        {
+            _logger.LogWarning("TrailName is empty; nothing to scrape for TrailId {TrailId}", trail.TrailId);
+            return trail;
+        }
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            // In a real implementation, TrailName won't be the URL. This is a stub.
+            var res = await client.GetAsync(trail.TrailName);
+            if (!res.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Failed to fetch {Url} status {Status}", trail.TrailName, res.StatusCode);
+                return trail;
+            }
+
+            var html = await res.Content.ReadAsStringAsync();
+            var parser = new HtmlParser();
+            var doc = await parser.ParseDocumentAsync(html);
+
+            // Stub: pick first paragraph/text as status and reason
+            var p = doc.QuerySelector("p");
+            if (p is not null)
+            {
+                trail.Status = p.TextContent?.Trim();
+                trail.Reason = p.TextContent?.Trim();
+            }
+
+            trail.LastScrapedTime = DateTime.UtcNow;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request failed for TrailId {TrailId}", trail.TrailId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error scraping trail {TrailId}", trail.TrailId);
+        }
+
+        return trail;
+    }
+}

@@ -1,0 +1,19 @@
+﻿using Microsoft.EntityFrameworkCore;
+using QCSingleTrack.Domain;
+
+namespace QCSingleTrack.Infrastructure.Data;
+
+public class TrailStatusDbContext : DbContext
+{
+    public TrailStatusDbContext(DbContextOptions<TrailStatusDbContext> options) : base(options)
+    {
+    }
+
+    public DbSet<TrailStatus> TrailStatuses { get; set; } = null!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new TrailStatusConfiguration());
+        base.OnModelCreating(modelBuilder);
+    }
+}

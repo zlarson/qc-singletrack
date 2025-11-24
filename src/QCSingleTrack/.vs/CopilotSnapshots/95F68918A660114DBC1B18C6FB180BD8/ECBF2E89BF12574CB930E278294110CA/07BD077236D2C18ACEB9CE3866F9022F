@@ -1,0 +1,14 @@
+﻿using System.Threading.Tasks;
+using QCSingleTrack.Domain;
+
+namespace QCSingleTrack.TrailStatusScraperFn.Services;
+
+public interface ITrailScraper
+{
+    /// <summary>
+    /// Scrapes status and reason for a given trail and returns updated TrailStatus object.
+    /// Implementations should NOT persist — persistence is the responsibility of the caller.
+    /// </summary>
+    /// <param name="trail">The trail record to update.</param>
+    Task<IEnumerable<ScrapedTrailResult>> ScrapeForcAsync();
+}

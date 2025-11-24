@@ -1,0 +1,27 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QCSingleTrack.Domain", "QCSingleTrack.Domain\QCSingleTrack.Domain.csproj", "{A9A6F3E4-5F5B-4E0F-9F7D-2B9E4E1B1C11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrailStatus.ScraperFn", "QCSingleTrack.ScraperFn\TrailStatus.ScraperFn.csproj", "{D3D8BF3A-2E6D-45C7-9A93-2D8D6E6A8E77}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A9A6F3E4-5F5B-4E0F-9F7D-2B9E4E1B1C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9A6F3E4-5F5B-4E0F-9F7D-2B9E4E1B1C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9A6F3E4-5F5B-4E0F-9F7D-2B9E4E1B1C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9A6F3E4-5F5B-4E0F-9F7D-2B9E4E1B1C11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3D8BF3A-2E6D-45C7-9A93-2D8D6E6A8E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3D8BF3A-2E6D-45C7-9A93-2D8D6E6A8E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3D8BF3A-2E6D-45C7-9A93-2D8D6E6A8E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3D8BF3A-2E6D-45C7-9A93-2D8D6E6A8E77}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

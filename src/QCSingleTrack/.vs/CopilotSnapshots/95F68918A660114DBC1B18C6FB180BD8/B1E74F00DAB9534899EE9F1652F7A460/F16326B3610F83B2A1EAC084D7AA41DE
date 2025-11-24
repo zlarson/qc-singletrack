@@ -1,0 +1,76 @@
+﻿using System.Net.Http;
+using System.Threading.Tasks;
+using AngleSharp;
+using AngleSharp.Html.Parser;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using QCSingleTrack.Domain;
+using QCSingleTrack.TrailStatusScraperFn.Settings;
+
+namespace QCSingleTrack.TrailStatusScraperFn.Services;
+
+public class AngleSharpTrailScraper : ITrailScraper
+{
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<AngleSharpTrailScraper> _logger;
+    private readonly ScraperOptions _options;
+
+    public AngleSharpTrailScraper(IHttpClientFactory httpClientFactory, ILogger<AngleSharpTrailScraper> logger, IOptions<ScraperOptions> options)
+    {
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
+        _options = options.Value;
+    }
+
+    public async Task<TrailStatus> ScrapeAsync(TrailStatus trail)
+    {
+        // Placeholder implementation: use named client
+        if (string.IsNullOrEmpty(trail.TrailName))
+        {
+            _logger.LogWarning("TrailName is empty; nothing to scrape for TrailId {TrailId}", trail.TrailId);
+            return trail;
+        }
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient("ScraperClient");
+            // If TrailName is not a full URL, try to use BaseUrl + TrailName
+            var requestUri = trail.TrailName;
+            if (!Uri.IsWellFormedUriString(trail.TrailName, UriKind.Absolute) && !string.IsNullOrWhiteSpace(_options.BaseUrl))
+            {
+                requestUri = new Uri(new Uri(_options.BaseUrl), trail.TrailName).ToString();
+            }
+
+            var res = await client.GetAsync(requestUri);
+            if (!res.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Failed to fetch {Url} status {Status}", requestUri, res.StatusCode);
+                return trail;
+            }
+
+            var html = await res.Content.ReadAsStringAsync();
+            var parser = new HtmlParser();
+            var doc = await parser.ParseDocumentAsync(html);
+
+            // Stub: pick first paragraph/text as status and reason
+            var p = doc.QuerySelector("p");
+            if (p is not null)
+            {
+                trail.Status = p.TextContent?.Trim();
+                trail.Reason = p.TextContent?.Trim();
+            }
+
+            trail.LastScrapedTime = DateTime.UtcNow;
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "HTTP request failed for TrailId {TrailId}", trail.TrailId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error scraping trail {TrailId}", trail.TrailId);
+        }
+
+        return trail;
+    }
+}

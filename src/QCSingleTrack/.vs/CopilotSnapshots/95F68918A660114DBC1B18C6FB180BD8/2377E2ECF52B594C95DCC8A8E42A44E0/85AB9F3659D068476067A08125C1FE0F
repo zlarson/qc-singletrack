@@ -1,0 +1,123 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using AngleSharp.Dom;
+using AngleSharp.Html.Parser;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using QCSingleTrack.TrailStatusScraperFn.Settings;
+
+namespace QCSingleTrack.TrailStatusScraperFn.Services;
+
+public class ScrapedTrailResult
+{
+    public string? TrailName { get; set; }
+    public string? Status { get; set; }
+    public string? Reason { get; set; }
+}
+
+public class AngleSharpTrailScraper : ITrailScraper
+{
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<AngleSharpTrailScraper> _logger;
+    private readonly ScraperOptions _options;
+
+    public AngleSharpTrailScraper(IHttpClientFactory httpClientFactory, ILogger<AngleSharpTrailScraper> logger, IOptions<ScraperOptions> options)
+    {
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
+        _options = options.Value;
+    }
+
+    public async Task<IEnumerable<ScrapedTrailResult>> ScrapeForcAsync()
+    {
+        var results = new List<ScrapedTrailResult>();
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient("ScraperClient");
+
+            var res = await client.GetAsync("/");
+
+            if (!res.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Failed to fetch {Url} status {Status}", client.BaseAddress, res.StatusCode);
+                return results;
+            }
+
+            var html = await res.Content.ReadAsStringAsync();
+            var parser = new HtmlParser();
+            var doc = await parser.ParseDocumentAsync(html);
+
+            // Select the element with id 'trailblock'
+            var trailBlock = doc.QuerySelector("#trailblock") ?? doc.QuerySelector("div#trailblock");
+            if (trailBlock is null)
+            {
+                _logger.LogWarning("No element with id 'trailblock' found on page {Url}", client.BaseAddress);
+                return results;
+            }
+
+            // Look for direct child items representing trails. Common patterns: direct div children, elements with class 'trail' or 'trail-item'
+            var itemSelectors = new[] { ":scope > div", ".trail", ".trail-item", "li" };
+            var items = new List<IElement>();
+            foreach (var sel in itemSelectors)
+            {
+                var found = trailBlock.QuerySelectorAll(sel);
+                if (found?.Length > 0)
+                {
+                    items.AddRange(found);
+                }
+            }
+
+            // If no items found by selectors, fall back to all child elements
+            if (!items.Any())
+            {
+                items.AddRange(trailBlock.Children);
+            }
+
+            foreach (var item in items)
+            {
+                // Extract a name: prefer heading elements, then anchor text
+                var name = item.QuerySelector("h1, h2, h3, h4, h5, h6")?.TextContent?.Trim()
+                           ?? item.QuerySelector("a")?.TextContent?.Trim();
+
+                // Extract status and reason from common class names or nearby text
+                var status = item.QuerySelector(".status, .trail-status, span.status, .status-text")?.TextContent?.Trim();
+                var reason = item.QuerySelector(".reason, .trail-reason, .reason-text")?.TextContent?.Trim();
+
+                // Heuristic: if status not found, look for text nodes containing keywords
+                if (string.IsNullOrWhiteSpace(status))
+                {
+                    var txt = item.TextContent ?? string.Empty;
+                    var tokens = new[] { "open", "closed", "partial", "caution" };
+                    var found = tokens.FirstOrDefault(t => txt.IndexOf(t, StringComparison.OrdinalIgnoreCase) >= 0);
+                    if (!string.IsNullOrWhiteSpace(found))
+                    {
+                        status = found;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(status) && string.IsNullOrWhiteSpace(reason))
+                {
+                    // Skip empty items
+                    continue;
+                }
+
+                results.Add(new ScrapedTrailResult
+                {
+                    TrailName = name ?? "",
+                    Status = status,
+                    Reason = reason
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error scraping FORC");
+        }
+
+        return results;
+    }
+}

@@ -1,0 +1,32 @@
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
+using QCSingleTrack.TrailStatusScraperFn.Services;
+using QCSingleTrack.Domain;
+
+namespace QCSingleTrack.TrailStatusScraperFn;
+
+public class TimerScrapeFunction
+{
+    private readonly ILogger _logger;
+    private readonly ITrailScraper _scraper;
+
+    public TimerScrapeFunction(ILoggerFactory loggerFactory, ITrailScraper scraper)
+    {
+        _logger = loggerFactory.CreateLogger<TimerScrapeFunction>();
+        _scraper = scraper;
+    }
+
+    [Function("TimerScrapeFunction")]
+    public async Task Run([TimerTrigger("*/10 * * * * *")] TimerInfo myTimer)
+    {
+        _logger.LogInformation("C# Timer trigger function executed at: {executionTime}", DateTime.Now);
+        if (myTimer.ScheduleStatus is not null)
+        {
+            _logger.LogInformation("Next timer schedule at: {nextSchedule}", myTimer.ScheduleStatus.Next);
+        }
+
+        var results = await _scraper.ScrapeForcAsync();
+    }
+}

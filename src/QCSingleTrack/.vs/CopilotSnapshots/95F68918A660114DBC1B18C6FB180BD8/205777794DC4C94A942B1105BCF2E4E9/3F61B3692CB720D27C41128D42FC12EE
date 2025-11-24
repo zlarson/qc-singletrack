@@ -1,0 +1,29 @@
+﻿namespace QCSingleTrack.Domain
+{
+    public class Trail
+    {
+        public int TrailId { get; set; }            // Primary Key
+        public string? TrailName { get; set; }
+        public string? Description { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
+
+        // Navigation: one-to-one relationship to TrailStatus
+        public TrailStatus? TrailStatus { get; set; }
+    }
+
+    public class TrailStatus
+    {
+        public int TrailId { get; set; }            // Primary Key (also FK to Trail)
+        public string? TrailName { get; set; }
+        public string? Status { get; set; }          // Scraped status text
+        public DateTime LastScrapedTime { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
+        public decimal Rain24h { get; set; }         // 24h rainfall
+        public decimal CurrentTemp { get; set; }     // Current temperature
+
+        // Navigation back to Trail (principal)
+        public Trail? Trail { get; set; }
+    }
+}

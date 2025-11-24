@@ -1,0 +1,113 @@
+﻿using System.Net.Http;
+using AngleSharp.Dom;
+using AngleSharp.Html.Parser;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using QCSingleTrack.Application.Settings;
+
+namespace QCSingleTrack.Application.Services;
+
+public class AngleSharpTrailScraper : ITrailScraper
+{
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<AngleSharpTrailScraper> _logger;
+    private readonly ScraperOptions _options;
+
+    public AngleSharpTrailScraper(IHttpClientFactory httpClientFactory, ILogger<AngleSharpTrailScraper> logger, IOptions<ScraperOptions> options)
+    {
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
+        _options = options.Value;
+    }
+
+    public async Task<IEnumerable<ScrapedTrailResult>> ScrapeForcAsync()
+    {
+        var results = new List<ScrapedTrailResult>();
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient("ScraperClient");
+
+            var res = await client.GetAsync("/");
+
+            if (!res.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Failed to fetch {Url} status {Status}", client.BaseAddress, res.StatusCode);
+                return results;
+            }
+
+            var html = await res.Content.ReadAsStringAsync();
+            var parser = new HtmlParser();
+            var doc = await parser.ParseDocumentAsync(html);
+
+            var containerElement = doc.QuerySelector("#trailblocks") ?? doc.QuerySelector("div#trailblocks");
+
+            IHtmlCollection<IElement>? blocks;
+            if (containerElement is not null)
+            {
+                blocks = containerElement.QuerySelectorAll("div#trailblock");
+                if (blocks is null || blocks.Length == 0)
+                {
+                    blocks = containerElement.QuerySelectorAll(".trailblock, div[id='trailblock']");
+                }
+            }
+            else
+            {
+                blocks = doc.QuerySelectorAll("div#trailblock");
+                if (blocks is null || blocks.Length == 0)
+                {
+                    blocks = doc.QuerySelectorAll(".trailblock, div[id='trailblock']");
+                }
+            }
+
+            if (blocks is null || blocks.Length == 0)
+            {
+                _logger.LogWarning("No trail blocks found on page {Url}", client.BaseAddress);
+                return results;
+            }
+
+            foreach (var block in blocks)
+            {
+                var parkEl = block.QuerySelector("p#park");
+                var reasonEl = block.QuerySelector("p#status");
+
+                var name = parkEl?.TextContent?.Trim();
+                var reason = reasonEl?.TextContent?.Trim();
+
+                // Derive the actual status from the block's CSS class
+                var cls = block.GetAttribute("class");
+                string? status = null;
+
+                if (!string.IsNullOrWhiteSpace(cls))
+                {
+                    if (cls.IndexOf("open", StringComparison.OrdinalIgnoreCase) >= 0) status = "Open";
+                    else if (cls.IndexOf("caution", StringComparison.OrdinalIgnoreCase) >= 0) status = "Caution";
+                    else if (cls.IndexOf("closed", StringComparison.OrdinalIgnoreCase) >= 0) status = "Closed";
+                }
+
+                // Fallback: if we couldn't determine status from class, try the status paragraph text
+                if (string.IsNullOrWhiteSpace(status) && !string.IsNullOrWhiteSpace(reason))
+                {
+                    status = reason;
+                    // clear reason since it was actually the status
+                    reason = null;
+                }
+
+                if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(status)) continue;
+
+                results.Add(new ScrapedTrailResult
+                {
+                    TrailName = name ?? string.Empty,
+                    Status = status,
+                    Reason = reason
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error scraping FORC");
+        }
+
+        return results;
+    }
+}

@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using AngleSharp.Html.Parser;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using QCSingleTrack.TrailStatusScraperFn.Settings;
+
+namespace QCSingleTrack.TrailStatusScraperFn.Services;
+
+public class AngleSharpTrailScraper : ITrailScraper
+{
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<AngleSharpTrailScraper> _logger;
+    private readonly ScraperOptions _options;
+
+    public AngleSharpTrailScraper(IHttpClientFactory httpClientFactory, ILogger<AngleSharpTrailScraper> logger, IOptions<ScraperOptions> options)
+    {
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
+        _options = options.Value;
+    }
+
+    public async Task<IEnumerable<ScrapedTrailResult>> ScrapeForcAsync()
+    {
+        var results = new List<ScrapedTrailResult>();
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient("ScraperClient");
+
+            var res = await client.GetAsync("/");
+
+            if (!res.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Failed to fetch {Url} status {Status}", client.BaseAddress, res.StatusCode);
+                return results;
+            }
+
+            var html = await res.Content.ReadAsStringAsync();
+            var parser = new HtmlParser();
+            var doc = await parser.ParseDocumentAsync(html);
+
+            // Stub: pick first paragraph/text as status and reason
+            var p = doc.QuerySelector("p");
+            if (p is not null)
+            {
+                results.Add(new ScrapedTrailResult { TrailName = "FORC", Status = p.TextContent?.Trim(), Reason = p.TextContent?.Trim() });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error scraping FORC");
+        }
+
+        return results;
+    }
+}
