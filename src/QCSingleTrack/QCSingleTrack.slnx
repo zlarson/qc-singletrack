@@ -2,6 +2,7 @@
   <Folder Name="/docs/">
     <File Path="../../docs/gemini-original-plan.md" />
   </Folder>
+  <Project Path="QCSingleTrack.Api/QCSingleTrack.Api.csproj" />
   <Project Path="QCSingleTrack.Application/QCSingleTrack.Application.csproj" />
   <Project Path="QCSingleTrack.Domain/QCSingleTrack.Domain.csproj" />
   <Project Path="QCSingleTrack.Infrastructure.Data/QCSingleTrack.Infrastructure.Data.csproj" />

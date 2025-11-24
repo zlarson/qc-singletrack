@@ -1,5 +1,3 @@
-using System;
-
 namespace QCSingleTrack.Domain
 {
     public class CurrentStatus

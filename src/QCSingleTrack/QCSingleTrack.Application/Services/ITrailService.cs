@@ -9,4 +9,6 @@ public interface ITrailService
     Task<Trail?> GetTrailByIdAsync(int id);
 
     Task UpdateTrailStatusesAsync(IEnumerable<ScrapedTrailResult> results);
+
+    Task<IEnumerable<Trail>> GetAllTrailsAsync();
 }

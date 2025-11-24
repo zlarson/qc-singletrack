@@ -3,24 +3,80 @@
   "WorkspaceRootPath": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7A852D2C-55A4-7E84-4E78-F2F9BC19504C}|QCSingleTrack.Infrastructure.Data\\QCSingleTrack.Infrastructure.Data.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.infrastructure.data\\configurations\\trailconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7A852D2C-55A4-7E84-4E78-F2F9BC19504C}|QCSingleTrack.Infrastructure.Data\\QCSingleTrack.Infrastructure.Data.csproj|solutionrelative:qcsingletrack.infrastructure.data\\configurations\\trailconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\middleware\\apikeymiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\middleware\\apikeymiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1630A7F4-8529-4F00-BF29-6826FEBD56C4}|QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.domain\\currentstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1630A7F4-8529-4F00-BF29-6826FEBD56C4}|QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj|solutionrelative:qcsingletrack.domain\\currentstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7A852D2C-55A4-7E84-4E78-F2F9BC19504C}|QCSingleTrack.Infrastructure.Data\\QCSingleTrack.Infrastructure.Data.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.infrastructure.data\\configurations\\currenttrailstatusconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7A852D2C-55A4-7E84-4E78-F2F9BC19504C}|QCSingleTrack.Infrastructure.Data\\QCSingleTrack.Infrastructure.Data.csproj|solutionrelative:qcsingletrack.infrastructure.data\\configurations\\currenttrailstatusconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1630A7F4-8529-4F00-BF29-6826FEBD56C4}|QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.domain\\trail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1630A7F4-8529-4F00-BF29-6826FEBD56C4}|QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj|solutionrelative:qcsingletrack.domain\\trail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\models\\traildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\models\\traildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\controllers\\trailscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\controllers\\trailscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1630A7F4-8529-4F00-BF29-6826FEBD56C4}|QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.domain\\qcsingletrack.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{1630A7F4-8529-4F00-BF29-6826FEBD56C4}|QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj|solutionrelative:qcsingletrack.domain\\qcsingletrack.domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.api\\qcsingletrack.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{CAA58D9D-4E4F-8402-AF28-E72A3B3F15F2}|QCSingleTrack.Api\\QCSingleTrack.Api.csproj|solutionrelative:qcsingletrack.api\\qcsingletrack.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F478DC54-1AE2-4928-87CE-C9D00E671A82}|QCSingleTrack.TrailStatusScraperFn\\QCSingleTrack.TrailStatusScraperFn.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.trailstatusscraperfn\\local.settings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{F478DC54-1AE2-4928-87CE-C9D00E671A82}|QCSingleTrack.TrailStatusScraperFn\\QCSingleTrack.TrailStatusScraperFn.csproj|solutionrelative:qcsingletrack.trailstatusscraperfn\\local.settings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B47F7523-4D3E-58F7-9289-BF22DB1AD6A0}|QCSingleTrack.Application\\QCSingleTrack.Application.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.application\\services\\trailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B47F7523-4D3E-58F7-9289-BF22DB1AD6A0}|QCSingleTrack.Application\\QCSingleTrack.Application.csproj|solutionrelative:qcsingletrack.application\\services\\trailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7A852D2C-55A4-7E84-4E78-F2F9BC19504C}|QCSingleTrack.Infrastructure.Data\\QCSingleTrack.Infrastructure.Data.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.infrastructure.data\\trailstatusdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7A852D2C-55A4-7E84-4E78-F2F9BC19504C}|QCSingleTrack.Infrastructure.Data\\QCSingleTrack.Infrastructure.Data.csproj|solutionrelative:qcsingletrack.infrastructure.data\\trailstatusdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B47F7523-4D3E-58F7-9289-BF22DB1AD6A0}|QCSingleTrack.Application\\QCSingleTrack.Application.csproj|d:\\code\\qc-singletrack\\src\\qcsingletrack\\qcsingletrack.application\\services\\itrailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B47F7523-4D3E-58F7-9289-BF22DB1AD6A0}|QCSingleTrack.Application\\QCSingleTrack.Application.csproj|solutionrelative:qcsingletrack.application\\services\\itrailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\QCSingleTrack.Api.csproj||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\QCSingleTrack.Api\\QCSingleTrack.Api.csproj||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\QCSingleTrack.Api\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\Controllers\\TrailsController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\QCSingleTrack.Api\\Controllers\\TrailsController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\appsettings.Development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\QCSingleTrack.Api\\appsettings.Development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,71 +86,253 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CurrentStatus.cs",
-              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Domain\\CurrentStatus.cs",
-              "RelativeDocumentMoniker": "QCSingleTrack.Domain\\CurrentStatus.cs",
-              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Domain\\CurrentStatus.cs",
-              "RelativeToolTip": "QCSingleTrack.Domain\\CurrentStatus.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-24T18:54:25.895Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CurrentTrailStatusConfiguration.cs",
-              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Infrastructure.Data\\Configurations\\CurrentTrailStatusConfiguration.cs",
-              "RelativeDocumentMoniker": "QCSingleTrack.Infrastructure.Data\\Configurations\\CurrentTrailStatusConfiguration.cs",
-              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Infrastructure.Data\\Configurations\\CurrentTrailStatusConfiguration.cs",
-              "RelativeToolTip": "QCSingleTrack.Infrastructure.Data\\Configurations\\CurrentTrailStatusConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-24T18:53:14.619Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "TrailConfiguration.cs",
-              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Infrastructure.Data\\Configurations\\TrailConfiguration.cs",
-              "RelativeDocumentMoniker": "QCSingleTrack.Infrastructure.Data\\Configurations\\TrailConfiguration.cs",
-              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Infrastructure.Data\\Configurations\\TrailConfiguration.cs",
-              "RelativeToolTip": "QCSingleTrack.Infrastructure.Data\\Configurations\\TrailConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-24T18:52:50.05Z",
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "QCSingleTrack.Api\\Properties\\launchSettings.json",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Properties\\launchSettings.json",
+              "RelativeToolTip": "QCSingleTrack.Api\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-24T20:07:01.846Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "TrailStatusDbContext.cs",
-              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Infrastructure.Data\\TrailStatusDbContext.cs",
-              "RelativeDocumentMoniker": "QCSingleTrack.Infrastructure.Data\\TrailStatusDbContext.cs",
-              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Infrastructure.Data\\TrailStatusDbContext.cs",
-              "RelativeToolTip": "QCSingleTrack.Infrastructure.Data\\TrailStatusDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-24T18:51:36.752Z",
+              "DocumentIndex": 8,
+              "Title": "QCSingleTrack.Domain",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj",
+              "RelativeDocumentMoniker": "QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj",
+              "RelativeToolTip": "QCSingleTrack.Domain\\QCSingleTrack.Domain.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-24T19:44:33.604Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "QCSingleTrack.Api\\appsettings.Development.json",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json",
+              "RelativeToolTip": "QCSingleTrack.Api\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-24T19:42:10.387Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json",
+              "RelativeToolTip": "src\\QCSingleTrack\\QCSingleTrack.Api\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-24T19:41:42.866Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "local.settings.json",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.TrailStatusScraperFn\\local.settings.json",
+              "RelativeDocumentMoniker": "QCSingleTrack.TrailStatusScraperFn\\local.settings.json",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.TrailStatusScraperFn\\local.settings.json",
+              "RelativeToolTip": "QCSingleTrack.TrailStatusScraperFn\\local.settings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAB7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-24T19:39:54.097Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "QCSingleTrack.Api",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\QCSingleTrack.Api.csproj",
+              "RelativeDocumentMoniker": "QCSingleTrack.Api\\QCSingleTrack.Api.csproj",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\QCSingleTrack.Api.csproj",
+              "RelativeToolTip": "QCSingleTrack.Api\\QCSingleTrack.Api.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-24T19:33:56.92Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "TrailsController.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Controllers\\TrailsController.cs",
+              "RelativeDocumentMoniker": "QCSingleTrack.Api\\Controllers\\TrailsController.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Controllers\\TrailsController.cs",
+              "RelativeToolTip": "QCSingleTrack.Api\\Controllers\\TrailsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:35:11.991Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Program.cs",
+              "RelativeDocumentMoniker": "QCSingleTrack.Api\\Program.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Program.cs",
+              "RelativeToolTip": "QCSingleTrack.Api\\Program.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAACoAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:32:56.345Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CurrentStatus.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Domain\\CurrentStatus.cs",
+              "RelativeDocumentMoniker": "QCSingleTrack.Domain\\CurrentStatus.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Domain\\CurrentStatus.cs",
+              "RelativeToolTip": "QCSingleTrack.Domain\\CurrentStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:44:39.699Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ApiKeyMiddleware.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs",
+              "RelativeDocumentMoniker": "QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs",
+              "RelativeToolTip": "QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:32:37.27Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "TrailDto.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Models\\TrailDto.cs",
+              "RelativeDocumentMoniker": "QCSingleTrack.Api\\Models\\TrailDto.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Api\\Models\\TrailDto.cs",
+              "RelativeToolTip": "QCSingleTrack.Api\\Models\\TrailDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:47:00.404Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Trail.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Domain\\Trail.cs",
+              "RelativeDocumentMoniker": "QCSingleTrack.Domain\\Trail.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Domain\\Trail.cs",
+              "RelativeToolTip": "QCSingleTrack.Domain\\Trail.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:48:16.539Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "src\\QCSingleTrack.Api\\appsettings.Development.json",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\appsettings.Development.json",
+              "RelativeToolTip": "src\\QCSingleTrack.Api\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-24T19:45:02.606Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "TrailsController.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\Controllers\\TrailsController.cs",
+              "RelativeDocumentMoniker": "src\\QCSingleTrack.Api\\Controllers\\TrailsController.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\Controllers\\TrailsController.cs",
+              "RelativeToolTip": "src\\QCSingleTrack.Api\\Controllers\\TrailsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:31:02.435Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ApiKeyMiddleware.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs",
+              "RelativeDocumentMoniker": "src\\QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs",
+              "RelativeToolTip": "src\\QCSingleTrack.Api\\Middleware\\ApiKeyMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:30:58.406Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\Program.cs",
+              "RelativeDocumentMoniker": "src\\QCSingleTrack.Api\\Program.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\Program.cs",
+              "RelativeToolTip": "src\\QCSingleTrack.Api\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:30:52.659Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "QCSingleTrack.Api.csproj",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\QCSingleTrack.Api.csproj",
+              "RelativeDocumentMoniker": "src\\QCSingleTrack.Api\\QCSingleTrack.Api.csproj",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\src\\QCSingleTrack.Api\\QCSingleTrack.Api.csproj",
+              "RelativeToolTip": "src\\QCSingleTrack.Api\\QCSingleTrack.Api.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-24T19:30:46.698Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "TrailService.cs",
               "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Application\\Services\\TrailService.cs",
               "RelativeDocumentMoniker": "QCSingleTrack.Application\\Services\\TrailService.cs",
               "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Application\\Services\\TrailService.cs",
               "RelativeToolTip": "QCSingleTrack.Application\\Services\\TrailService.cs",
-              "ViewState": "AgIAAEgAAAAAAAAAAAAAAFwAAAAmAAAAAAAAAA==",
+              "ViewState": "AgIAADgAAAAAAAAAAAAhwCIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-24T18:09:46.046Z",
+              "WhenOpened": "2025-11-24T19:30:40.824Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ITrailService.cs",
+              "DocumentMoniker": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Application\\Services\\ITrailService.cs",
+              "RelativeDocumentMoniker": "QCSingleTrack.Application\\Services\\ITrailService.cs",
+              "ToolTip": "D:\\code\\qc-singletrack\\src\\QCSingleTrack\\QCSingleTrack.Application\\Services\\ITrailService.cs",
+              "RelativeToolTip": "QCSingleTrack.Application\\Services\\ITrailService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:30:30.321Z",
               "EditorCaption": ""
             }
           ]

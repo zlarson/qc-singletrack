@@ -1,7 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using QCSingleTrack.Domain;
 using QCSingleTrack.Infrastructure.Data;
-using System.Net.NetworkInformation;
 
 namespace QCSingleTrack.Application.Services;
 
@@ -18,6 +21,12 @@ public class TrailService : ITrailService
     {
         await using var db = _dbFactory.CreateDbContext();
         return await db.Trails.Include(t => t.CurrentTrailStatus).FirstOrDefaultAsync(t => t.TrailId == id);
+    }
+
+    public async Task<IEnumerable<Trail>> GetAllTrailsAsync()
+    {
+        await using var db = _dbFactory.CreateDbContext();
+        return await db.Trails.Include(t => t.CurrentTrailStatus).ToListAsync();
     }
 
     public async Task UpdateTrailStatusesAsync(IEnumerable<ScrapedTrailResult> results)
