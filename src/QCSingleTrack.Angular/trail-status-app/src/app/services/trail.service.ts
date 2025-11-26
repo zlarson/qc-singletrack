@@ -17,10 +17,6 @@ export class TrailService {
       .set('X-Api-Key', this.apiKey)
       .set('Content-Type', 'application/json');
 
-    console.log('Making API call to:', this.apiUrl);
-    console.log('With headers:', headers.keys());
-    console.log('API Key being sent:', this.apiKey);
-
     return this.http.get<TrailDto[]>(this.apiUrl, { headers });
   }
 
@@ -28,10 +24,6 @@ export class TrailService {
     const headers = new HttpHeaders()
       .set('X-Api-Key', this.apiKey)
       .set('Content-Type', 'application/json');
-
-    console.log('Making API call to:', `${this.apiUrl}/${id}`);
-    console.log('With headers:', headers.keys());
-    console.log('API Key being sent:', this.apiKey);
 
     return this.http.get<TrailDto>(`${this.apiUrl}/${id}`, { headers });
   }
