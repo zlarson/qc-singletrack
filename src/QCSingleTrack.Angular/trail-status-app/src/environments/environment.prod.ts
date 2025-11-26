@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-api-domain.azurewebsites.net/api/trails',
+  apiUrl: 'https://qcsingletrackapi20251126134734-dda4h2bqh7dsbcb4.centralus-01.azurewebsites.net/api/trails',
   apiKey: 'dev-local-api-key'
 };
