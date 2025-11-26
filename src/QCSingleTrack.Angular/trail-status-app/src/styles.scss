@@ -2,6 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Diagonal Gradient Background */
+body {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 64px; /* Height of fixed header */
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.1) 60%,
+    rgba(0, 0, 0, 0.3) 80%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Dark mode - lighter gradient since background is already dark */
+.dark body::before {
+  background: linear-gradient(135deg, 
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.2) 60%,
+    rgba(0, 0, 0, 0.4) 80%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
 /* Leaflet Map Styling */
 #trail-map {
   height: 320px !important;
@@ -10,6 +46,8 @@
   background-color: #f0f0f0;
   border: 1px solid #ddd;
   border-radius: 0.5rem;
+  position: relative;
+  z-index: 0 !important;
   
   .leaflet-control-container {
     .leaflet-control-zoom {

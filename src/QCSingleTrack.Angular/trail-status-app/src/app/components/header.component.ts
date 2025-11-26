@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule, RouterModule],  template: `
-    <header class="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors">
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors">
       <nav class="container mx-auto px-4">        <div class="flex items-center justify-between h-16">          <!-- Logo/Brand -->
           <div class="flex-shrink-0">
             <h1 class="text-xl font-bold text-gray-800 dark:text-white">QC SingleTrack</h1>

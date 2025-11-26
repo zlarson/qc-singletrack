@@ -5,115 +5,74 @@ import { TrailService } from '../services/trail.service';
 import { MapService } from '../services/map.service';
 import { TrailDto } from '../models/trail-dto.model';
 
+interface GalleryImage {
+  id: number;
+  title: string;
+  url: string;
+  thumbnailUrl: string;
+}
+
 @Component({
   selector: 'app-trail-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],  template: `    <div class="container mx-auto px-4 py-6">
-      <!-- Loading State -->
-      <div *ngIf="loading" class="text-center py-8">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <p class="mt-4 text-gray-600 dark:text-gray-300">Loading trail status...</p>
-      </div>
+  imports: [CommonModule, RouterModule],
+  templateUrl: './trail-list.component.html',
+  styles: [`
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
-      <!-- Error State -->
-      <div *ngIf="error" class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-6">
-        <p class="font-bold">Error loading trail data:</p>
-        <p>{{ error }}</p>
-      </div>
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
 
-      <!-- Master-Detail Layout -->
-      <div *ngIf="!loading && !error" class="flex gap-6">        <!-- Left: Trail List (narrow) -->
-        <div class="w-1/3 space-y-3">
-          <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Our Trails</h2>
-          
-          <div *ngFor="let trail of trails"
-               [ngClass]="getTrailCardClass(trail.currentStatus, trail === selectedTrail)"
-               class="rounded-lg shadow-sm border hover:shadow-md transition-all cursor-pointer p-3"
-               (click)="selectTrail(trail)">            <div class="flex items-center justify-between">
-              <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ trail.trailName }}</h3>
-              </div>
-              <div class="flex items-center gap-2 flex-shrink-0 ml-2">                <span [ngClass]="getStatusBadgeClass(trail.currentStatus)" 
-                      class="px-2 py-1 rounded-full text-xs font-medium uppercase">
-                  {{ trail.currentStatus }}
-                </span>
-                <svg [ngClass]="getChevronClass(trail.currentStatus)" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>        <!-- Right: Trail Details -->
-        <div class="flex-1 p-6">
-          <div *ngIf="!selectedTrail" class="text-center text-gray-500 dark:text-gray-400 py-12">
-            <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-            </svg>
-            <h3 class="text-lg font-medium dark:text-gray-300">Select a trail</h3>
-            <p class="dark:text-gray-400">Choose a trail from the list to view its details</p>
-          </div><div *ngIf="selectedTrail">            <!-- Trail Name Header -->
-            <div class="mb-4 flex items-center justify-between">              <div class="flex items-center gap-3">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ selectedTrail.trailName }}</h2>
-                <div class="relative">
-                  <button 
-                    (click)="copyTrailLink(selectedTrail)" 
-                    [class]="linkCopied ? 'p-2 text-green-600 bg-green-50 dark:bg-green-900 rounded-full transition-colors' : 'p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-full transition-colors'"
-                    title="Copy link to this trail">
-                    <svg *ngIf="!linkCopied" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
-                    </svg>
-                    <svg *ngIf="linkCopied" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                  </button>
-                  <!-- Copy confirmation tooltip -->
-                  <div *ngIf="linkCopied" 
-                       class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                    Link copied!
-                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-green-600"></div>
-                  </div>
-                </div>
-              </div>
-              <span [ngClass]="getStatusBadgeClass(selectedTrail.currentStatus)" 
-                    class="px-4 py-2 rounded-full text-base font-semibold uppercase">
-                {{ selectedTrail.currentStatus }}
-              </span>
-            </div>            <!-- Description -->
-            <div class="mb-6">
-              <p class="text-gray-700 dark:text-gray-300 text-base leading-relaxed">{{ selectedTrail.shortDescription || selectedTrail.description || 'No description available' }}</p>
-                <!-- Status Reason (if available) -->
-              <div *ngIf="selectedTrail.currentReason" class="mt-4">
-                <p class="text-gray-500 dark:text-gray-400 text-sm">Status Reason: {{ selectedTrail.currentReason }}</p>
-              </div>
-            </div>            <!-- Map Section -->
-            <div class="mb-6">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Trail Location</h3>
-              <div id="trail-map" class="rounded-lg h-80 w-full bg-gray-100 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center">
-                <p class="text-gray-500 dark:text-gray-400" *ngIf="!mapInitialized">Loading map...</p>
-              </div>
-            </div><!-- More Information -->
-            <div class="space-y-6">
-              <div>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">More Information</h3>
-                <div class="bg-white dark:bg-gray-700 rounded-lg p-4 space-y-3 transition-colors">                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Status Source</label>
-                      <p class="text-gray-900 dark:text-gray-100">{{ selectedTrail.currentSource }}</p>
-                    </div>
-                    <div>
-                      <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Status Last Updated</label>
-                      <p class="text-gray-900 dark:text-gray-100">{{ formatLastScrapedTime(selectedTrail.lastScrapedTime) }}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: []
+    .animate-fadeIn {
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .animate-scaleIn {
+      animation: scaleIn 0.25s ease-out;
+    }
+
+    /* Custom scrollbar for gallery */
+    .overflow-y-auto::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 10px;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    :host-context(.dark) .overflow-y-auto::-webkit-scrollbar-track {
+      background: #374151;
+    }
+
+    :host-context(.dark) .overflow-y-auto::-webkit-scrollbar-thumb {
+      background: #6b7280;
+    }
+
+    :host-context(.dark) .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+  `]
 })
 export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
   trails: TrailDto[] = [];
@@ -122,6 +81,88 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
   error: string | null = null;
   linkCopied = false;
   mapInitialized = false;
+  selectedImage: GalleryImage | null = null;
+
+  // Sample gallery images - replace with actual trail photos from API
+  galleryImages: GalleryImage[] = [
+    {
+      id: 1,
+      title: 'Trail Overview',
+      url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=400&fit=crop'
+    },
+    {
+      id: 2,
+      title: 'Technical Section',
+      url: 'https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?w=400&h=400&fit=crop'
+    },
+    {
+      id: 3,
+      title: 'Scenic View',
+      url: 'https://images.unsplash.com/photo-1476362555312-ab9e108a0b7e?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1476362555312-ab9e108a0b7e?w=400&h=400&fit=crop'
+    },
+    {
+      id: 4,
+      title: 'Forest Path',
+      url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=400&fit=crop'
+    },
+    {
+      id: 5,
+      title: 'Jump Feature',
+      url: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=400&fit=crop'
+    },
+    {
+      id: 6,
+      title: 'Trailhead',
+      url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=400&fit=crop'
+    },
+    {
+      id: 7,
+      title: 'Creek Crossing',
+      url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
+    },
+    {
+      id: 8,
+      title: 'Bermed Turn',
+      url: 'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&h=400&fit=crop'
+    },
+    {
+      id: 9,
+      title: 'Autumn Colors',
+      url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop'
+    },
+    {
+      id: 10,
+      title: 'Trail Marker',
+      url: 'https://images.unsplash.com/photo-1571188654248-7a89213915f7?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1571188654248-7a89213915f7?w=400&h=400&fit=crop'
+    },
+    {
+      id: 11,
+      title: 'Rock Garden',
+      url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=400&fit=crop'
+    },
+    {
+      id: 12,
+      title: 'Summit View',
+      url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
+    }
+  ];
+
+  get currentImageIndex(): number {
+    if (!this.selectedImage) return -1;
+    return this.galleryImages.findIndex(img => img.id === this.selectedImage!.id);
+  }
 
   constructor(
     private trailService: TrailService,
@@ -254,16 +295,16 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
     let baseClass = '';
     switch (status) {
       case 'Open': 
-        baseClass = isSelected ? 'bg-green-400 dark:bg-green-600 border-green-500 dark:border-green-400 shadow-lg transform scale-y-110' : 'bg-green-200 dark:bg-green-800 border-green-400 dark:border-green-600'; 
+        baseClass = isSelected ? 'bg-gradient-to-r from-green-200 to-green-500 dark:from-green-800 dark:to-green-600 border-green-500 dark:border-green-400 shadow-lg transform scale-y-110' : 'bg-green-200 dark:bg-green-800 border-green-400 dark:border-green-600'; 
         break;
       case 'Closed': 
-        baseClass = isSelected ? 'bg-red-400 dark:bg-red-600 border-red-500 dark:border-red-400 shadow-lg transform scale-y-110' : 'bg-red-200 dark:bg-red-800 border-red-400 dark:border-red-600'; 
+        baseClass = isSelected ? 'bg-gradient-to-r from-red-200 to-red-500 dark:from-red-800 dark:to-red-600 border-red-500 dark:border-red-400 shadow-lg transform scale-y-110' : 'bg-red-200 dark:bg-red-800 border-red-400 dark:border-red-600'; 
         break;
       case 'Caution': 
-        baseClass = isSelected ? 'bg-yellow-400 dark:bg-yellow-600 border-yellow-500 dark:border-yellow-400 shadow-lg transform scale-y-110' : 'bg-yellow-200 dark:bg-yellow-800 border-yellow-400 dark:border-yellow-600'; 
+        baseClass = isSelected ? 'bg-gradient-to-r from-yellow-200 to-yellow-500 dark:from-yellow-800 dark:to-yellow-600 border-yellow-500 dark:border-yellow-400 shadow-lg transform scale-y-110' : 'bg-yellow-200 dark:bg-yellow-800 border-yellow-400 dark:border-yellow-600'; 
         break;
       default: 
-        baseClass = isSelected ? 'bg-gray-300 dark:bg-gray-600 border-gray-400 dark:border-gray-500 shadow-lg transform scale-y-110' : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600'; 
+        baseClass = isSelected ? 'bg-gradient-to-r from-gray-200 to-gray-400 dark:from-gray-700 dark:to-gray-600 border-gray-400 dark:border-gray-500 shadow-lg transform scale-y-110' : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600'; 
         break;
     }
     
@@ -382,5 +423,31 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     document.body.removeChild(textArea);
+  }
+
+  openImageModal(image: GalleryImage): void {
+    this.selectedImage = image;
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  }
+
+  closeImageModal(): void {
+    this.selectedImage = null;
+    document.body.style.overflow = ''; // Restore scrolling
+  }
+
+  nextImage(event: Event): void {
+    event.stopPropagation();
+    const nextIndex = this.currentImageIndex + 1;
+    if (nextIndex < this.galleryImages.length) {
+      this.selectedImage = this.galleryImages[nextIndex];
+    }
+  }
+
+  previousImage(event: Event): void {
+    event.stopPropagation();
+    const prevIndex = this.currentImageIndex - 1;
+    if (prevIndex >= 0) {
+      this.selectedImage = this.galleryImages[prevIndex];
+    }
   }
 }
