@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TrailDto } from '../models/trail-dto.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrailService {
-  private readonly apiUrl = 'https://localhost:60997/api/trails';
-  private readonly apiKey = 'dev-local-api-key';
+  private readonly apiUrl = environment.apiUrl;
+  private readonly apiKey = environment.apiKey;
 
   constructor(private http: HttpClient) { }
   getTrails(): Observable<TrailDto[]> {
