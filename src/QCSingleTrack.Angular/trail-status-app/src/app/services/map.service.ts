@@ -123,6 +123,7 @@ export class MapService {
       case 'Open': return '#22c55e';
       case 'Closed': return '#ef4444';
       case 'Caution': return '#f59e0b';
+      case 'Freeze/Thaw': return '#06b6d4';
       default: return '#6b7280';
     }
   }
@@ -132,6 +133,7 @@ export class MapService {
       case 'Open': return 'bg-green-100 text-green-800';
       case 'Closed': return 'bg-red-100 text-red-800';
       case 'Caution': return 'bg-yellow-100 text-yellow-800';
+      case 'Freeze/Thaw': return 'bg-cyan-100 text-cyan-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   }

@@ -296,19 +296,19 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
     let baseClass = '';
     switch (status) {
       case 'Open': 
-        baseClass = isSelected ? 'bg-gradient-to-r from-green-200 to-green-500 dark:from-green-800 dark:to-green-600 border-green-500 dark:border-green-400 shadow-lg transform scale-y-110' : 'bg-green-200 dark:bg-green-800 border-green-400 dark:border-green-600'; 
+        baseClass = isSelected ? 'bg-gradient-to-r from-green-200 to-green-500 dark:from-green-800 dark:to-green-600 border-green-500 dark:border-green-400 shadow-lg transform scale-y-110' : 'bg-green-300 dark:bg-green-800 border-green-400 dark:border-green-600'; 
         break;
       case 'Closed': 
-        baseClass = isSelected ? 'bg-gradient-to-r from-red-200 to-red-500 dark:from-red-800 dark:to-red-600 border-red-500 dark:border-red-400 shadow-lg transform scale-y-110' : 'bg-red-200 dark:bg-red-800 border-red-400 dark:border-red-600'; 
+        baseClass = isSelected ? 'bg-gradient-to-r from-red-200 to-red-500 dark:from-red-800 dark:to-red-600 border-red-500 dark:border-red-400 shadow-lg transform scale-y-110' : 'bg-red-300 dark:bg-red-800 border-red-400 dark:border-red-600'; 
         break;
       case 'Caution': 
-        baseClass = isSelected ? 'bg-gradient-to-r from-yellow-200 to-yellow-500 dark:from-yellow-800 dark:to-yellow-600 border-yellow-500 dark:border-yellow-400 shadow-lg transform scale-y-110' : 'bg-yellow-200 dark:bg-yellow-800 border-yellow-400 dark:border-yellow-600'; 
+        baseClass = isSelected ? 'bg-gradient-to-r from-yellow-200 to-yellow-500 dark:from-yellow-800 dark:to-yellow-600 border-yellow-500 dark:border-yellow-400 shadow-lg transform scale-y-110' : 'bg-yellow-300 dark:bg-yellow-800 border-yellow-400 dark:border-yellow-600'; 
         break;
       case 'Freeze/Thaw': 
-        baseClass = isSelected ? 'bg-gradient-to-r from-cyan-200 to-cyan-500 dark:from-cyan-800 dark:to-cyan-600 border-cyan-500 dark:border-cyan-400 shadow-lg transform scale-y-110' : 'bg-cyan-200 dark:bg-cyan-800 border-cyan-400 dark:border-cyan-600'; 
+        baseClass = isSelected ? 'bg-gradient-to-r from-cyan-200 to-cyan-500 dark:from-cyan-800 dark:to-cyan-600 border-cyan-500 dark:border-cyan-400 shadow-lg transform scale-y-110' : 'bg-cyan-300 dark:bg-cyan-800 border-cyan-400 dark:border-cyan-600'; 
         break;
       default: 
-        baseClass = isSelected ? 'bg-gradient-to-r from-gray-200 to-gray-400 dark:from-gray-700 dark:to-gray-600 border-gray-400 dark:border-gray-500 shadow-lg transform scale-y-110' : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600'; 
+        baseClass = isSelected ? 'bg-gradient-to-r from-gray-200 to-gray-400 dark:from-gray-700 dark:to-gray-600 border-gray-400 dark:border-gray-500 shadow-lg transform scale-y-110' : 'bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600'; 
         break;
     }
     
@@ -339,6 +339,37 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.mapInitialized) {
       this.mapService.highlightTrail(trail);
     }
+
+    // Scroll to trail details on mobile
+    this.scrollToDetailsOnMobile();
+  }
+
+  private scrollToDetailsOnMobile(): void {
+    // Check if we're in mobile view (less than lg breakpoint - 1024px)
+    if (window.innerWidth < 1024) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        const detailsElement = document.getElementById('trail-details');
+        if (detailsElement) {
+          const headerOffset = 80; // Account for fixed header (64px) + some padding
+          const elementPosition = detailsElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    }
+  }
+
+  scrollToTop(): void {
+    const headerOffset = 80;
+    window.scrollTo({
+      top: headerOffset,
+      behavior: 'smooth'
+    });
   }selectTrailById(trailId: number, updateUrl: boolean = true): void {
     const trail = this.trails.find(t => t.trailId === trailId);
     if (trail) {

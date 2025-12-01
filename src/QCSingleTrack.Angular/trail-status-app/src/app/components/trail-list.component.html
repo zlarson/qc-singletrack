@@ -39,7 +39,7 @@
     </div>
 
     <!-- Right: Trail Details (full width on mobile, flex-1 on desktop) -->
-    <div class="w-full lg:flex-1 p-6">
+    <div id="trail-details" class="w-full lg:flex-1 p-6">
       <div *ngIf="!selectedTrail" class="text-center text-gray-500 dark:text-gray-400 py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
@@ -53,6 +53,7 @@
         <div class="mb-4 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ selectedTrail.trailName }}</h2>
+            <!-- Share button -->
             <div class="relative">
               <button 
                 (click)="copyTrailLink(selectedTrail)" 
@@ -73,10 +74,21 @@
               </div>
             </div>
           </div>
-          <span [ngClass]="getStatusBadgeClass(selectedTrail.currentStatus)" 
-                class="px-4 py-2 rounded-full text-base font-semibold uppercase">
-            {{ selectedTrail.currentStatus }}
-          </span>
+          <div class="flex items-center gap-2">
+            <span [ngClass]="getStatusBadgeClass(selectedTrail.currentStatus)" 
+                  class="px-4 py-2 rounded-full text-base font-semibold uppercase">
+              {{ selectedTrail.currentStatus }}
+            </span>
+            <!-- Back to top button (mobile only) -->
+            <button 
+              (click)="scrollToTop()" 
+              class="lg:hidden p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-full transition-colors"
+              title="Back to trail list">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <!-- Description -->
@@ -97,10 +109,9 @@
         </div>
 
         <!-- Photo Gallery Section -->
-        <div class="mb-6">
+        <!-- <div class="mb-6">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Trail Photos</h3>
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-            <!-- Scrollable Photo Grid -->
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-96 overflow-y-auto justify-items-center px-2">
               <div 
                 *ngFor="let image of galleryImages"
@@ -119,7 +130,6 @@
               </div>
             </div>
 
-            <!-- Empty State -->
             <div *ngIf="galleryImages.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
               <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -127,15 +137,14 @@
               <p class="text-sm">No photos available yet</p>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Modal Overlay -->
-        <div 
+        <!-- <div 
           *ngIf="selectedImage"
           (click)="closeImageModal()"
           class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 animate-fadeIn">
           
-          <!-- Close Button -->
           <button 
             (click)="closeImageModal()"
             class="absolute top-4 right-4 z-50 text-white hover:text-gray-300 transition-colors p-2">
@@ -144,7 +153,6 @@
             </svg>
           </button>
 
-          <!-- Previous Button -->
           <button 
             *ngIf="currentImageIndex > 0"
             (click)="previousImage($event)"
@@ -154,7 +162,6 @@
             </svg>
           </button>
 
-          <!-- Next Button -->
           <button 
             *ngIf="currentImageIndex < galleryImages.length - 1"
             (click)="nextImage($event)"
@@ -164,7 +171,6 @@
             </svg>
           </button>
 
-          <!-- Modal Content -->
           <div 
             (click)="$event.stopPropagation()"
             class="relative max-w-7xl max-h-[90vh] animate-scaleIn">
@@ -173,7 +179,6 @@
               [alt]="selectedImage.title"
               class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl">
             
-            <!-- Image Info -->
             <div class="mt-4 text-center text-white">
               <h3 class="text-xl font-semibold mb-2">{{ selectedImage.title }}</h3>
               <p class="text-gray-300 text-sm">
@@ -181,7 +186,7 @@
               </p>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- More Information -->
         <div class="space-y-6">
