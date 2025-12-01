@@ -289,6 +289,7 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'Open': return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border border-green-400 dark:border-green-600';
       case 'Closed': return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border border-red-400 dark:border-red-600';
       case 'Caution': return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-400 dark:border-yellow-600';
+      case 'Freeze/Thaw': return 'bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200 border border-cyan-400 dark:border-cyan-600';
       default: return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600';
     }
   }  getTrailCardClass(status: string, isSelected: boolean = false): string {
@@ -302,6 +303,9 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
       case 'Caution': 
         baseClass = isSelected ? 'bg-gradient-to-r from-yellow-200 to-yellow-500 dark:from-yellow-800 dark:to-yellow-600 border-yellow-500 dark:border-yellow-400 shadow-lg transform scale-y-110' : 'bg-yellow-200 dark:bg-yellow-800 border-yellow-400 dark:border-yellow-600'; 
+        break;
+      case 'Freeze/Thaw': 
+        baseClass = isSelected ? 'bg-gradient-to-r from-cyan-200 to-cyan-500 dark:from-cyan-800 dark:to-cyan-600 border-cyan-500 dark:border-cyan-400 shadow-lg transform scale-y-110' : 'bg-cyan-200 dark:bg-cyan-800 border-cyan-400 dark:border-cyan-600'; 
         break;
       default: 
         baseClass = isSelected ? 'bg-gradient-to-r from-gray-200 to-gray-400 dark:from-gray-700 dark:to-gray-600 border-gray-400 dark:border-gray-500 shadow-lg transform scale-y-110' : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600'; 
