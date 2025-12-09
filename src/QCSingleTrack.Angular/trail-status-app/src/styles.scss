@@ -15,62 +15,6 @@ main {
   position: relative;
 }
 
-/* CSS-generated topographic pattern - more visible */
-main::before {
-  content: '';
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 30vh;
-  background: 
-    repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(107, 114, 128, 0.3) 35px, rgba(107, 114, 128, 0.3) 37px),
-    repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(107, 114, 128, 0.2) 35px, rgba(107, 114, 128, 0.2) 37px),
-    linear-gradient(to top, rgba(107, 114, 128, 0.15), transparent 70%);
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Dark mode - adjust colors */
-.dark main::before {
-  background: 
-    repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(96, 165, 250, 0.4) 35px, rgba(96, 165, 250, 0.4) 37px),
-    repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(96, 165, 250, 0.3) 35px, rgba(96, 165, 250, 0.3) 37px),
-    linear-gradient(to top, rgba(96, 165, 250, 0.2), transparent 70%);
-}
-
-/* Gradient overlay to fade pattern into background */
-main::after {
-  content: '';
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 30vh;
-  background: linear-gradient(to bottom,
-    rgb(249, 250, 251) 0%,
-    rgba(249, 250, 251, 0.9) 15%,
-    rgba(249, 250, 251, 0.6) 35%,
-    rgba(249, 250, 251, 0.2) 60%,
-    transparent 100%
-  );
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Dark mode gradient overlay */
-.dark main::after {
-  background: linear-gradient(to bottom,
-    rgb(17, 24, 39) 0%,
-    rgba(17, 24, 39, 0.9) 15%,
-    rgba(17, 24, 39, 0.6) 35%,
-    rgba(17, 24, 39, 0.2) 60%,
-    transparent 100%
-  );
-}
-
 /* Ensure content is above the background */
 main > * {
   position: relative;

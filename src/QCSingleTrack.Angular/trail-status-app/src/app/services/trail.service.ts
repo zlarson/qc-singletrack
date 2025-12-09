@@ -27,4 +27,12 @@ export class TrailService {
 
     return this.http.get<TrailDto>(`${this.apiUrl}/${id}`, { headers });
   }
+
+  getTrailWeather(trailId: number): Observable<any> {
+    const headers = new HttpHeaders()
+      .set('X-Api-Key', this.apiKey)
+      .set('Content-Type', 'application/json');
+
+    return this.http.get<any>(`${this.apiUrl}/${trailId}/weather`, { headers });
+  }
 }
