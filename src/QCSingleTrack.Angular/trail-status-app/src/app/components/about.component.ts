@@ -19,22 +19,13 @@ import { CommonModule } from '@angular/common';
             <p class="text-gray-600 dark:text-gray-300 mb-4">
               Our trail condition information is sourced directly from the 
               <a href="https://www.qcforc.org/" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">Friends of Off-Road Cycling (FORC)</a>, 
-              the dedicated mountain bike club that maintains and advocates for our local trail systems. 
+              our local mountain bike club that maintains and advocates for our local trail systems. 
               We couldn't provide this app without the dedication of our local trail stewards who work tirelessly 
               to build, maintain, and monitor trail conditions. If you enjoy these trails, please consider 
               <a href="https://www.qcforc.org/content.php?120" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">joining FORC</a> 
               or volunteering for trail maintenance days to help preserve and improve these incredible riding opportunities 
               for our community.
             </p>
-            
-            <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-3">Application Features</h3>
-            <ul class="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2 mb-6">
-              <li>Real-time trail status updates</li>
-              <li>Weather conditions and rainfall data</li>
-              <li>Trail difficulty and length information</li>
-              <li>Interactive maps and directions</li>
-              <li>Trail photos and gallery</li>
-            </ul>
             
             <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-3">Status Indicators</h3>
             <div class="space-y-2 mb-6">
