@@ -108,17 +108,17 @@
         </div>
 
         <!-- Photo Gallery Section -->
-        <!-- <div class="mb-6">
+        <div class="mb-6" *ngIf="selectedTrail.photos && selectedTrail.photos.length > 0">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Trail Photos</h3>
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-96 overflow-y-auto justify-items-center px-2">
               <div 
-                *ngFor="let image of galleryImages"
-                (click)="openImageModal(image)"
+                *ngFor="let photo of selectedTrail.photos; let i = index"
+                (click)="openImageModal(photo, i)"
                 class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group bg-gray-200 dark:bg-gray-700 shadow-md hover:shadow-xl transition-all">
                 <img 
-                  [src]="image.thumbnailUrl" 
-                  [alt]="image.title"
+                  [src]="photo.thumbnailUrl || photo.photoUrl" 
+                  [alt]="photo.caption || (selectedTrail.trailName + ' photo ' + (i + 1))"
                   class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   loading="lazy">
                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -128,18 +128,11 @@
                 </div>
               </div>
             </div>
-
-            <div *ngIf="galleryImages.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
-              <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-              </svg>
-              <p class="text-sm">No photos available yet</p>
-            </div>
           </div>
-        </div> -->
+        </div>
 
         <!-- Modal Overlay -->
-        <!-- <div 
+        <div 
           *ngIf="selectedImage"
           (click)="closeImageModal()"
           class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 animate-fadeIn">
@@ -162,7 +155,7 @@
           </button>
 
           <button 
-            *ngIf="currentImageIndex < galleryImages.length - 1"
+            *ngIf="selectedTrail.photos && currentImageIndex < selectedTrail.photos.length - 1"
             (click)="nextImage($event)"
             class="absolute right-4 z-50 text-white hover:text-gray-300 transition-colors p-2">
             <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,18 +167,18 @@
             (click)="$event.stopPropagation()"
             class="relative max-w-7xl max-h-[90vh] animate-scaleIn">
             <img 
-              [src]="selectedImage.url" 
-              [alt]="selectedImage.title"
+              [src]="selectedImage.photoUrl" 
+              [alt]="selectedImage.caption || selectedTrail.trailName"
               class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl">
             
             <div class="mt-4 text-center text-white">
-              <h3 class="text-xl font-semibold mb-2">{{ selectedImage.title }}</h3>
-              <p class="text-gray-300 text-sm">
-                {{ currentImageIndex + 1 }} of {{ galleryImages.length }}
+              <h3 class="text-xl font-semibold mb-2" *ngIf="selectedImage.caption">{{ selectedImage.caption }}</h3>
+              <p class="text-gray-300 text-sm" *ngIf="selectedTrail.photos">
+                {{ currentImageIndex + 1 }} of {{ selectedTrail.photos.length }}
               </p>
             </div>
           </div>
-        </div> -->
+        </div>
 
         <!-- More Information -->
         <div class="space-y-6">

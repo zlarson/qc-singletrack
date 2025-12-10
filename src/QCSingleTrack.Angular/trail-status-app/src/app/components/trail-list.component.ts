@@ -3,14 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { TrailService } from '../services/trail.service';
 import { MapService } from '../services/map.service';
-import { TrailDto } from '../models/trail-dto.model';
-
-interface GalleryImage {
-  id: number;
-  title: string;
-  url: string;
-  thumbnailUrl: string;
-}
+import { TrailDto, TrailPhotoDto } from '../models/trail-dto.model';
 
 @Component({
   selector: 'app-trail-list',
@@ -81,88 +74,8 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
   error: string | null = null;
   linkCopied = false;
   mapInitialized = false;
-  selectedImage: GalleryImage | null = null;
-
-  // Sample gallery images - replace with actual trail photos from API
-  galleryImages: GalleryImage[] = [
-    {
-      id: 1,
-      title: 'Trail Overview',
-      url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=400&fit=crop'
-    },
-    {
-      id: 2,
-      title: 'Technical Section',
-      url: 'https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?w=400&h=400&fit=crop'
-    },
-    {
-      id: 3,
-      title: 'Scenic View',
-      url: 'https://images.unsplash.com/photo-1476362555312-ab9e108a0b7e?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1476362555312-ab9e108a0b7e?w=400&h=400&fit=crop'
-    },
-    {
-      id: 4,
-      title: 'Forest Path',
-      url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=400&fit=crop'
-    },
-    {
-      id: 5,
-      title: 'Jump Feature',
-      url: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=400&h=400&fit=crop'
-    },
-    {
-      id: 6,
-      title: 'Trailhead',
-      url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=400&fit=crop'
-    },
-    {
-      id: 7,
-      title: 'Creek Crossing',
-      url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
-    },
-    {
-      id: 8,
-      title: 'Bermed Turn',
-      url: 'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&h=400&fit=crop'
-    },
-    {
-      id: 9,
-      title: 'Autumn Colors',
-      url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop'
-    },
-    {
-      id: 10,
-      title: 'Trail Marker',
-      url: 'https://images.unsplash.com/photo-1571188654248-7a89213915f7?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1571188654248-7a89213915f7?w=400&h=400&fit=crop'
-    },
-    {
-      id: 11,
-      title: 'Rock Garden',
-      url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=400&fit=crop'
-    },
-    {
-      id: 12,
-      title: 'Summit View',
-      url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
-    }
-  ];
-
-  get currentImageIndex(): number {
-    if (!this.selectedImage) return -1;
-    return this.galleryImages.findIndex(img => img.id === this.selectedImage!.id);
-  }
+  selectedImage: TrailPhotoDto | null = null;
+  currentImageIndex: number = -1;
 
   constructor(
     private trailService: TrailService,
@@ -459,29 +372,37 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
     document.body.removeChild(textArea);
   }
 
-  openImageModal(image: GalleryImage): void {
-    this.selectedImage = image;
+  openImageModal(photo: TrailPhotoDto, index: number): void {
+    this.selectedImage = photo;
+    this.currentImageIndex = index;
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
   }
 
   closeImageModal(): void {
     this.selectedImage = null;
+    this.currentImageIndex = -1;
     document.body.style.overflow = ''; // Restore scrolling
   }
 
   nextImage(event: Event): void {
     event.stopPropagation();
+    if (!this.selectedTrail?.photos) return;
+    
     const nextIndex = this.currentImageIndex + 1;
-    if (nextIndex < this.galleryImages.length) {
-      this.selectedImage = this.galleryImages[nextIndex];
+    if (nextIndex < this.selectedTrail.photos.length) {
+      this.selectedImage = this.selectedTrail.photos[nextIndex];
+      this.currentImageIndex = nextIndex;
     }
   }
 
   previousImage(event: Event): void {
     event.stopPropagation();
+    if (!this.selectedTrail?.photos) return;
+    
     const prevIndex = this.currentImageIndex - 1;
     if (prevIndex >= 0) {
-      this.selectedImage = this.galleryImages[prevIndex];
+      this.selectedImage = this.selectedTrail.photos[prevIndex];
+      this.currentImageIndex = prevIndex;
     }
   }
 }

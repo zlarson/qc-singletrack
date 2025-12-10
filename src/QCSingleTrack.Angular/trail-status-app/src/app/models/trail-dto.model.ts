@@ -1,3 +1,9 @@
+export interface TrailPhotoDto {
+  photoUrl: string | null;
+  thumbnailUrl: string | null;
+  caption: string | null;
+}
+
 export interface TrailDto {
   trailId: number;
   trailName: string;
@@ -9,6 +15,7 @@ export interface TrailDto {
   currentSource: string;
   currentReason: string | null;
   lastScrapedTime: string;
+  photos?: TrailPhotoDto[];
   // These might not be in your current API - we can add them later
   rain24h?: number;
   currentTemp?: number;
