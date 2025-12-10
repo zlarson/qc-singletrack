@@ -1,14 +1,37 @@
-<!-- Simple, clear favicon for QC SingleTrack -->
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <!-- Solid green background -->
-  <rect width="32" height="32" fill="#16a34a" rx="4"/>
+<!-- QC Bike Trails favicon - wrench and gears design -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Dark background matching dark mode -->
+  <rect width="100" height="100" fill="#111827" rx="8"/>
   
-  <!-- White "QC" text -->
-  <text x="16" y="12" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="white">QC</text>
+  <!-- Gray gear shapes in background -->
+  <g fill="#4B5563" opacity="0.6">
+    <!-- Top left gear -->
+    <circle cx="28" cy="25" r="12"/>
+    <circle cx="28" cy="25" r="6" fill="#111827"/>
+    <rect x="26" y="13" width="4" height="6"/>
+    <rect x="26" y="31" width="4" height="6"/>
+    <rect x="16" y="23" width="6" height="4"/>
+    <rect x="34" y="23" width="6" height="4"/>
+    
+    <!-- Top right gear (smaller) -->
+    <circle cx="72" cy="22" r="9"/>
+    <circle cx="72" cy="22" r="4" fill="#111827"/>
+    <rect x="70" y="13" width="4" height="5"/>
+    <rect x="70" y="27" width="4" height="5"/>
+    <rect x="63" y="20" width="5" height="4"/>
+    <rect x="77" y="20" width="5" height="4"/>
+  </g>
   
-  <!-- Simple trail/mountain icon -->
-  <path d="M6 20 L10 16 L14 18 L18 14 L22 16 L26 20 L26 24 L6 24 Z" fill="white" opacity="0.8"/>
+  <!-- Large green wrench (main focus) -->
+  <g transform="rotate(-25 50 60)">
+    <ellipse cx="50" cy="60" rx="12" ry="32" fill="#22c55e"/>
+    <!-- Wrench head opening -->
+    <circle cx="50" cy="35" r="7" fill="#111827"/>
+    <rect x="43" y="32" width="14" height="10" fill="#22c55e"/>
+    <!-- Bottom hole -->
+    <circle cx="50" cy="85" r="4" fill="#111827"/>
+  </g>
   
-  <!-- Trail line -->
-  <path d="M8 22 Q16 20 24 22" stroke="white" stroke-width="1.5" fill="none" opacity="0.9"/>
+  <!-- Small green circle accent -->
+  <circle cx="78" cy="50" r="5" fill="#22c55e"/>
 </svg>
