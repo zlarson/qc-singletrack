@@ -203,11 +203,10 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
         const trailId = this.route.snapshot.paramMap.get('id');
         if (trailId) {
           this.selectTrailById(parseInt(trailId, 10), false); // Don't update URL since we're already here
-        } else if (this.trails.length > 0) {
-          // Auto-select first trail if no specific trail requested
-          this.selectTrail(this.trails[0]);
         }
-          this.loading = false;
+        // Don't auto-select first trail - let user choose
+        
+        this.loading = false;
           // Initialize map after trails are loaded
         setTimeout(() => {
           if (!this.mapInitialized) {
