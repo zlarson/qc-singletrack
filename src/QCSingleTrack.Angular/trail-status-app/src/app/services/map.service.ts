@@ -75,7 +75,7 @@ export class MapService {
   }
 
   private createTrailMarker(trail: TrailDto, lat: number, lng: number, isSelected: boolean): L.Marker {
-    const icon = this.createTrailIcon(trail.currentStatus, isSelected);
+    const icon = this.createTrailIcon(trail.currentStatus || 'Open', isSelected);
     
     const marker = L.marker([lat, lng], { icon })
       .bindPopup(`
@@ -83,8 +83,8 @@ export class MapService {
           <h3 class="font-bold text-lg">${trail.trailName}</h3>
           <p class="text-sm text-gray-600 mb-2">${trail.shortDescription || 'No description available'}</p>
           <div class="flex items-center gap-2">
-            <span class="px-2 py-1 rounded text-xs font-medium uppercase ${this.getStatusPopupClass(trail.currentStatus)}">
-              ${trail.currentStatus}
+            <span class="px-2 py-1 rounded text-xs font-medium uppercase ${this.getStatusPopupClass(trail.currentStatus || 'Open')}">
+              ${trail.currentStatus || 'Open'}
             </span>
           </div>
         </div>

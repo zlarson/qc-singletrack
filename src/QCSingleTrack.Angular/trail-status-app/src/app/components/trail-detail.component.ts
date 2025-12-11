@@ -37,9 +37,9 @@ interface GalleryImage {
         <p>{{ error }}</p>
       </div>      <!-- Trail Detail Content -->
       <div *ngIf="trail && !loading && !error" class="max-w-4xl">        <!-- Header Banner -->
-        <div [ngClass]="getStatusBannerClass(trail.currentStatus)" class="rounded-xl p-6 text-white mb-6">
+        <div [ngClass]="getStatusBannerClass(trail.currentStatus || 'Open')" class="rounded-xl p-6 text-white mb-6">
           <h1 class="text-2xl font-bold mb-1">{{ trail.trailName.toUpperCase() }}</h1>
-          <p class="text-lg mb-1">STATUS: {{ trail.currentStatus.toUpperCase() }}</p>
+          <p class="text-lg mb-1">STATUS: {{ (trail.currentStatus || 'Open').toUpperCase() }}</p>
           <p class="text-sm opacity-90">
             Last updated: {{ trail.lastScrapedTime | date:'short' }}
           </p>

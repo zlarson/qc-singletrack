@@ -153,8 +153,8 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
   getGlobalStatus(): string {
     if (this.trails.length === 0) return 'No Data Available';
     
-    const closedCount = this.trails.filter(t => t.currentStatus === 'Closed').length;
-    const cautionCount = this.trails.filter(t => t.currentStatus === 'Caution').length;
+    const closedCount = this.trails.filter(t => (t.currentStatus || 'Open') === 'Closed').length;
+    const cautionCount = this.trails.filter(t => (t.currentStatus || 'Open') === 'Caution').length;
     
     if (closedCount === 0 && cautionCount === 0) {
       return 'All Trails Open';
@@ -166,15 +166,15 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getOpenTrailsCount(): number {
-    return this.trails.filter(t => t.currentStatus === 'Open').length;
+    return this.trails.filter(t => (t.currentStatus || 'Open') === 'Open').length;
   }
 
   getClosedTrailsCount(): number {
-    return this.trails.filter(t => t.currentStatus === 'Closed').length;
+    return this.trails.filter(t => (t.currentStatus || 'Open') === 'Closed').length;
   }
 
   getCautionTrailsCount(): number {
-    return this.trails.filter(t => t.currentStatus === 'Caution').length;
+    return this.trails.filter(t => (t.currentStatus || 'Open') === 'Caution').length;
   }
   getAggregateCountDisplay(): string {
     if (this.trails.length === 0) return 'No trail data available';

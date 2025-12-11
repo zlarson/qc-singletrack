@@ -11,7 +11,7 @@ export interface TrailDto {
   shortDescription: string | null;
   latitude: number;
   longitude: number;
-  currentStatus: 'Open' | 'Closed' | 'Caution';
+  currentStatus?: 'Open' | 'Closed' | 'Caution';
   currentSource: string;
   currentReason: string | null;
   lastScrapedTime: string;
