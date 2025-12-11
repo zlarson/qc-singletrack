@@ -26,8 +26,10 @@ export class AppInsightsService {
     // Track route changes
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        this.appInsights.trackPageView({ uri: event.urlAfterRedirects });
+      .subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          this.appInsights.trackPageView({ uri: event.urlAfterRedirects });
+        }
       });
   }
 
