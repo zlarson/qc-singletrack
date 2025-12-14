@@ -4,6 +4,7 @@ import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { TrailService } from '../services/trail.service';
 import { MapService } from '../services/map.service';
 import { TrailDto, TrailPhotoDto } from '../models/trail-dto.model';
+import { WeatherDto } from '../models/weather-dto.model';
 
 @Component({
   selector: 'app-trail-list',
@@ -76,6 +77,9 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
   mapInitialized = false;
   selectedImage: TrailPhotoDto | null = null;
   currentImageIndex: number = -1;
+  weatherData: WeatherDto | null = null;
+  weatherLoading = false;
+  weatherError: string | null = null;
 
   constructor(
     private trailService: TrailService,
@@ -252,8 +256,29 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
       this.mapService.highlightTrail(trail);
     }
 
+    // Load weather data for selected trail
+    this.loadWeatherData(trail.trailId);
+
     // Scroll to trail details on mobile
     this.scrollToDetailsOnMobile();
+  }
+
+  private loadWeatherData(trailId: number): void {
+    this.weatherLoading = true;
+    this.weatherError = null;
+    this.weatherData = null;
+
+    this.trailService.getTrailWeather(trailId).subscribe({
+      next: (data) => {
+        this.weatherData = data;
+        this.weatherLoading = false;
+      },
+      error: (err) => {
+        this.weatherError = 'Failed to load weather data';
+        this.weatherLoading = false;
+        console.error('Error loading weather:', err);
+      }
+    });
   }
 
   private scrollToDetailsOnMobile(): void {
@@ -382,6 +407,15 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedImage = null;
     this.currentImageIndex = -1;
     document.body.style.overflow = ''; // Restore scrolling
+  }
+
+  formatSunsetTime(sunset: string): string {
+    // Extract just the time portion (HH:MM) and convert to 12-hour format
+    const timePart = sunset.includes('T') ? sunset.split('T')[1].substring(0, 5) : sunset.substring(0, 5);
+    const [hours, minutes] = timePart.split(':');
+    const hour = parseInt(hours, 10);
+    const hour12 = hour > 12 ? hour - 12 : hour;
+    return `${hour12}:${minutes} PM`;
   }
 
   nextImage(event: Event): void {

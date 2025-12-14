@@ -29,9 +29,7 @@
                   class="px-2 py-1 rounded-full text-xs font-medium uppercase">
               {{ trail.currentStatus || 'Open' }}
             </span>
-            <svg [ngClass]="getChevronClass(trail.currentStatus || 'Open')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
+            <i [ngClass]="getChevronClass(trail.currentStatus || 'Open')" class="fas fa-chevron-right"></i>
           </div>
         </div>
       </div>
@@ -58,9 +56,7 @@
                 (click)="copyTrailLink(selectedTrail)" 
                 [class]="linkCopied ? 'p-2 text-green-600 bg-green-50 dark:bg-green-900 rounded-full transition-colors' : 'p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-full transition-colors'"
                 title="Copy link to this trail">
-                <svg *ngIf="!linkCopied" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
-                </svg>
+                <i *ngIf="!linkCopied" class="fas fa-share-nodes w-5 h-5"></i>
                 <svg *ngIf="linkCopied" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
@@ -90,6 +86,22 @@
           </div>
         </div>
 
+        <!-- Weather Info Bar -->
+        <div *ngIf="weatherData && !weatherLoading" class="mb-4 flex items-center gap-4 text-lg text-gray-600 dark:text-gray-400">
+          <div>
+            <i class="fas fa-temperature-half mr-1"></i>
+            <span class="font-medium">{{ weatherData.today.averageTemperature.toFixed(1) }}°F</span>
+          </div>
+          <div>
+            <i class="fas fa-droplet mr-1"></i>
+            <span class="font-medium">{{ weatherData.today.averagePrecipitation.toFixed(2) }}"</span>
+          </div>
+          <div>
+            <i class="fas fa-sun mr-1"></i>
+            <span class="font-medium">{{ formatSunsetTime(weatherData.today.sunset) }}</span>
+          </div>
+        </div>
+
         <!-- Description -->
         <div class="mb-6">
           <!-- Status Reason (if available) -->
@@ -101,7 +113,9 @@
 
         <!-- Map Section -->
         <div class="mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Trail Location</h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            <i class="fa-solid fa-location-crosshairs mr-2"></i>Location
+          </h3>
           <div id="trail-map" class="rounded-lg h-80 w-full bg-gray-100 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center relative z-0">
             <p class="text-gray-500 dark:text-gray-400" *ngIf="!mapInitialized">Loading map...</p>
           </div>
@@ -109,7 +123,9 @@
 
         <!-- Photo Gallery Section -->
         <div class="mb-6" *ngIf="selectedTrail.photos && selectedTrail.photos.length > 0">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Trail Photos</h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            <i class="fa-solid fa-camera mr-2"></i>Photos ({{ selectedTrail.photos.length }})
+          </h3>
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-96 overflow-y-auto justify-items-center px-2">
               <div 
@@ -181,11 +197,15 @@
         </div>
 
         <!-- More Information -->
-        <div class="space-y-6" *ngIf="selectedTrail.currentStatus">
+        <div class="space-y-6">
           <div>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">More Information</h3>
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 space-y-3">
-              <div class="grid grid-cols-2 gap-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+              <i class="fa-solid fa-circle-info mr-2"></i>More Information
+            </h3>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 space-y-4">
+              
+              <!-- Status Information (conditional) -->
+              <div class="grid grid-cols-2 gap-4" *ngIf="selectedTrail.currentStatus">
                 <div>
                   <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Status Source</label>
                   <p class="text-gray-900 dark:text-gray-100">{{ selectedTrail.currentSource }}</p>
@@ -195,6 +215,41 @@
                   <p class="text-gray-900 dark:text-gray-100">{{ formatLastScrapedTime(selectedTrail.lastScrapedTime) }}</p>
                 </div>
               </div>
+
+              <!-- Weather Loading State -->
+              <div *ngIf="weatherLoading" class="flex flex-col items-center justify-center py-6">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 dark:border-blue-400 mb-2"></div>
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Loading weather conditions...</p>
+              </div>
+
+              <!-- Weather Error State -->
+              <div *ngIf="weatherError && !weatherLoading" class="text-center py-4">
+                <svg class="w-10 h-10 mx-auto mb-2 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <p class="text-red-600 dark:text-red-400 text-sm">{{ weatherError }}</p>
+              </div>
+
+              <!-- Previous Days Weather (conditional) -->
+              <div *ngIf="weatherData && !weatherLoading && weatherData.previousDays.length > 0" class="pt-2">
+                <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Previous {{ weatherData.previousDays.length }} Days Weather</h4>
+                <div class="space-y-3">
+                  <div *ngFor="let day of weatherData.previousDays" class="text-sm border-l-2 border-gray-300 dark:border-gray-600 pl-3">
+                    <div class="font-medium text-gray-700 dark:text-gray-300 mb-1">{{ day.date | date:'MMM d' }}</div>
+                    <div class="flex gap-4 text-xs">
+                      <div>
+                        <i class="fas fa-temperature-half mr-1 text-gray-500 dark:text-gray-400"></i>
+                        <span class="text-gray-900 dark:text-gray-100">{{ day.averageTemperature.toFixed(1) }}°F</span>
+                      </div>
+                      <div>
+                        <i class="fas fa-droplet mr-1 text-gray-500 dark:text-gray-400"></i>
+                        <span class="text-gray-900 dark:text-gray-100">{{ day.averagePrecipitation.toFixed(2) }}"</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

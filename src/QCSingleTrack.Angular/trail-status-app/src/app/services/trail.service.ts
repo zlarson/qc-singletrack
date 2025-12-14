@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TrailDto } from '../models/trail-dto.model';
+import { WeatherDto } from '../models/weather-dto.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -28,11 +29,11 @@ export class TrailService {
     return this.http.get<TrailDto>(`${this.apiUrl}/${id}`, { headers });
   }
 
-  getTrailWeather(trailId: number): Observable<any> {
+  getTrailWeather(trailId: number): Observable<WeatherDto> {
     const headers = new HttpHeaders()
       .set('X-Api-Key', this.apiKey)
       .set('Content-Type', 'application/json');
 
-    return this.http.get<any>(`${this.apiUrl}/${trailId}/weather`, { headers });
+    return this.http.get<WeatherDto>(`${this.apiUrl}/${trailId}/weather`, { headers });
   }
 }
