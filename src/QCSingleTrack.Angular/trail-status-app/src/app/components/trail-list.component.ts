@@ -312,9 +312,20 @@ export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
     if (trail) {
       this.selectedTrail = trail;
       
+      // Highlight trail on map
+      if (this.mapInitialized) {
+        this.mapService.highlightTrail(trail);
+      }
+
+      // Load weather data for selected trail
+      this.loadWeatherData(trail.trailId);
+      
       if (updateUrl) {
         this.updateUrlForSelectedTrail(trailId);
       }
+
+      // Scroll to trail details on mobile
+      this.scrollToDetailsOnMobile();
     } else {
       // Trail not found - redirect to trails list without ID
       console.warn(`Trail with ID ${trailId} not found`);

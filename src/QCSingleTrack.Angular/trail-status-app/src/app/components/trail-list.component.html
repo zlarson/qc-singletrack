@@ -96,7 +96,7 @@
             <span class="font-medium">{{ weatherData.today.averageTemperature.toFixed(1) }}°F</span>
           </div>
           <div>
-            <i class="fas fa-droplet mr-1"></i>
+            <i class="fa-solid fa-cloud-rain mr-1"></i>
             <span class="font-medium">{{ weatherData.today.averagePrecipitation.toFixed(2) }}"</span>
           </div>
           <div>
@@ -237,22 +237,22 @@
               <!-- Previous Days Weather (conditional) -->
               <div *ngIf="weatherData && !weatherLoading && weatherData.previousDays.length > 0" class="pt-2">
                 <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Previous {{ weatherData.previousDays.length }} Days Weather</h4>
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div *ngFor="let day of weatherData.previousDays" class="rounded-lg p-3 bg-gradient-to-br from-blue-400 via-blue-300 to-blue-400 dark:from-blue-900 dark:via-blue-700 dark:to-blue-900 relative overflow-hidden">
                     <!-- Gradient accent circles -->
                     <div class="absolute top-0 right-0 w-20 h-20 bg-blue-200 dark:bg-blue-400 rounded-full opacity-30 dark:opacity-20 blur-xl"></div>
                     <div class="absolute bottom-0 left-0 w-16 h-16 bg-cyan-200 dark:bg-cyan-400 rounded-full opacity-30 dark:opacity-20 blur-lg"></div>
                     
                     <div class="relative z-10">
-                      <div class="text-4xl font-bold text-white mb-1 text-left leading-none">{{ day.date | date:'d' }}</div>
-                      <div class="text-sm font-medium text-white mb-3 text-left">{{ day.date | date:'MMM yyyy' }}</div>
+                      <div class="text-4xl font-bold text-white mb-1 text-center leading-none">{{ day.date | date:'d' }}</div>
+                      <div class="text-sm font-medium text-white mb-3 text-center">{{ day.date | date:'MMM yyyy' }}</div>
                       <div class="flex items-center justify-center gap-3 text-sm text-white dark:text-gray-200">
                         <div class="flex items-center gap-1">
                           <i class="fas fa-temperature-half text-white dark:text-gray-300"></i>
                           <span>{{ day.averageTemperature.toFixed(1) }}°F</span>
                         </div>
                         <div class="flex items-center gap-1">
-                          <i class="fas fa-droplet text-white dark:text-gray-300"></i>
+                          <i class="fa-solid fa-cloud-rain text-white dark:text-gray-300"></i>
                           <span>{{ day.averagePrecipitation.toFixed(2) }}"</span>
                         </div>
                         <div class="flex items-center gap-1">
