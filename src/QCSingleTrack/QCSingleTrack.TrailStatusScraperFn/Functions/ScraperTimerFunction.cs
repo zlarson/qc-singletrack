@@ -22,7 +22,7 @@ public class ScraperTimerFunction
 
     // Runs every 20 seconds
     [Function("ScrapeTimer")]
-    public async Task Run([TimerTrigger("*/20 * * * * *")] TimerInfo timer)
+    public async Task Run([TimerTrigger("*/30 * * * *")] TimerInfo timer)
     {
         _logger.LogInformation("ScrapeTimer fired at {Time}", DateTime.UtcNow);
 

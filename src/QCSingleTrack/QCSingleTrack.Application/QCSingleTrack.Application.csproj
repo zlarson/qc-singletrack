@@ -16,4 +16,12 @@
     <ProjectReference Include="..\QCSingleTrack.Domain\QCSingleTrack.Domain.csproj" />
     <ProjectReference Include="..\QCSingleTrack.Infrastructure.Data\QCSingleTrack.Infrastructure.Data.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="WeatherCodeLookup\**\*.*" />
+  </ItemGroup>
 </Project>

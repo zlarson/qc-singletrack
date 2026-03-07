@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QCSingleTrack.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using QCSingleTrack.Infrastructure.Data;
 namespace QCSingleTrack.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TrailStatusDbContext))]
-    partial class TrailStatusDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251210222939_AddPhotos")]
+    partial class AddPhotos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

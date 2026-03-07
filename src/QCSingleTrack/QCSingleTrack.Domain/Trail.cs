@@ -4,11 +4,15 @@ namespace QCSingleTrack.Domain
     {
         public int TrailId { get; set; }            // Primary Key
         public string? TrailName { get; set; }
+        public string? TrailNameForLookup { get; set; }
         public string? Description { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
 
         // Navigation: one-to-one relationship to CurrentTrailStatus
         public CurrentStatus? CurrentTrailStatus { get; set; }
+
+        // Navigation: one-to-many relationship to Photo
+        public ICollection<Photo>? Photos { get; set; }
     }
 }

@@ -20,13 +20,20 @@ public class TrailService : ITrailService
     public async Task<Trail?> GetTrailByIdAsync(int id)
     {
         await using var db = _dbFactory.CreateDbContext();
-        return await db.Trails.Include(t => t.CurrentTrailStatus).FirstOrDefaultAsync(t => t.TrailId == id);
+        return await db.Trails
+            .Include(t => t.CurrentTrailStatus)
+            .Include(t => t.Photos)
+            .FirstOrDefaultAsync(t => t.TrailId == id);
     }
 
     public async Task<IEnumerable<Trail>> GetAllTrailsAsync()
     {
         await using var db = _dbFactory.CreateDbContext();
-        return await db.Trails.Include(t => t.CurrentTrailStatus).ToListAsync();
+        return await db.Trails
+            .Include(t => t.CurrentTrailStatus)
+            .Include(t => t.Photos)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task UpdateTrailStatusesAsync(IEnumerable<ScrapedTrailResult> results)
@@ -45,7 +52,7 @@ public class TrailService : ITrailService
         // Load existing trails that match any of the scraped names, include current status
         var existingTrails = await db.Trails
             .Include(t => t.CurrentTrailStatus)
-            .Where(t => names.Contains(t.TrailName!))
+            .Where(t => names.Contains(t.TrailNameForLookup!))
             .ToListAsync();
 
         var comparer = StringComparer.OrdinalIgnoreCase;
@@ -57,14 +64,15 @@ public class TrailService : ITrailService
             if (string.IsNullOrWhiteSpace(name)) continue;
 
             // Try find an existing trail (case-insensitive)
-            var trail = existingTrails.FirstOrDefault(t => comparer.Equals(t.TrailName, name));
+            var trail = existingTrails.FirstOrDefault(t => comparer.Equals(t.TrailNameForLookup, name));
 
             if (trail == null)
             {
                 // Create a new trail and attach a CurrentTrailStatus entry
                 trail = new Trail
                 {
-                    TrailName = name
+                    TrailName = name,
+                    TrailNameForLookup = name
                 };
 
                 trail.CurrentTrailStatus = new CurrentStatus
@@ -92,20 +100,22 @@ public class TrailService : ITrailService
                     };
                     db.CurrentStatuses.Add(trail.CurrentTrailStatus);
                 }
-                else
-                {
-                    trail.CurrentTrailStatus.Status = result.Status;
-                    trail.CurrentTrailStatus.Source = "FORC";
-                    trail.CurrentTrailStatus.Reason = result.Reason;
-                    trail.CurrentTrailStatus.LastScrapedTime = DateTime.UtcNow;
+                else if (trail.CurrentTrailStatus.Status != result.Status || trail.CurrentTrailStatus.Reason != result.Reason)
+                { //only update the Status if its changed
+                    {
+                        trail.CurrentTrailStatus.Status = result.Status;
+                        trail.CurrentTrailStatus.Source = "FORC";
+                        trail.CurrentTrailStatus.Reason = result.Reason;
+                        trail.CurrentTrailStatus.LastScrapedTime = DateTime.UtcNow;
 
-                    db.CurrentStatuses.Update(trail.CurrentTrailStatus);
+                        db.CurrentStatuses.Update(trail.CurrentTrailStatus);
+                    }
+
+                    db.Trails.Update(trail);
                 }
-
-                db.Trails.Update(trail);
             }
-        }
 
-        await db.SaveChangesAsync();
+            await db.SaveChangesAsync();
+        }
     }
 }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.11.0" />
@@ -17,6 +18,10 @@
     <ProjectReference Include="..\QCSingleTrack.Application\QCSingleTrack.Application.csproj" />
     <ProjectReference Include="..\QCSingleTrack.Infrastructure.Data\QCSingleTrack.Infrastructure.Data.csproj" />
     <ProjectReference Include="..\QCSingleTrack.Domain\QCSingleTrack.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 
 </Project>

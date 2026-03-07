@@ -81,6 +81,7 @@ public class AngleSharpTrailScraper : ITrailScraper
                 if (!string.IsNullOrWhiteSpace(cls))
                 {
                     if (cls.IndexOf("open", StringComparison.OrdinalIgnoreCase) >= 0) status = "Open";
+                    else if (cls.IndexOf("freeze_thaw", StringComparison.OrdinalIgnoreCase) >= 0) status = "Freeze/Thaw";
                     else if (cls.IndexOf("caution", StringComparison.OrdinalIgnoreCase) >= 0) status = "Caution";
                     else if (cls.IndexOf("closed", StringComparison.OrdinalIgnoreCase) >= 0) status = "Closed";
                 }
@@ -90,7 +91,7 @@ public class AngleSharpTrailScraper : ITrailScraper
                 {
                     status = reason;
                     // clear reason since it was actually the status
-                    reason = null;
+                    //reason = null;
                 }
 
                 // If reason is the same as status, clear reason — we only keep reason when it's different

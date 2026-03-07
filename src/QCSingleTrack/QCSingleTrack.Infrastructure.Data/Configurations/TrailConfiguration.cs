@@ -12,6 +12,7 @@ public class TrailConfiguration : IEntityTypeConfiguration<Trail>
         builder.HasKey(t => t.TrailId);
 
         builder.Property(t => t.TrailName).HasMaxLength(200);
+        builder.Property(t => t.TrailNameForLookup).HasMaxLength(200);
         builder.Property(t => t.Description).HasMaxLength(1000);
         builder.Property(t => t.Latitude).HasColumnType("decimal(9,6)");
         builder.Property(t => t.Longitude).HasColumnType("decimal(9,6)");

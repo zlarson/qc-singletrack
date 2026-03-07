@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QCSingleTrack.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using QCSingleTrack.Infrastructure.Data;
 namespace QCSingleTrack.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TrailStatusDbContext))]
-    partial class TrailStatusDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251127155940_AddTrailNameForLookupMaxLen")]
+    partial class AddTrailNameForLookupMaxLen
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,36 +48,6 @@ namespace QCSingleTrack.Infrastructure.Data.Migrations
                     b.HasKey("TrailId");
 
                     b.ToTable("CurrentStatus", (string)null);
-                });
-
-            modelBuilder.Entity("QCSingleTrack.Domain.Photo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Caption")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("PhotoUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("ThumbnailUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("TrailId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TrailId");
-
-                    b.ToTable("Photos", (string)null);
                 });
 
             modelBuilder.Entity("QCSingleTrack.Domain.Trail", b =>
@@ -119,20 +92,9 @@ namespace QCSingleTrack.Infrastructure.Data.Migrations
                     b.Navigation("Trail");
                 });
 
-            modelBuilder.Entity("QCSingleTrack.Domain.Photo", b =>
-                {
-                    b.HasOne("QCSingleTrack.Domain.Trail", null)
-                        .WithMany("Photos")
-                        .HasForeignKey("TrailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("QCSingleTrack.Domain.Trail", b =>
                 {
                     b.Navigation("CurrentTrailStatus");
-
-                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }
