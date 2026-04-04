@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule, RouterModule],  template: `
-    <header class="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors">
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-black shadow-sm border-b border-gray-200 dark:border-neutral-600 transition-colors">
       <nav class="container mx-auto px-4">        <div class="flex items-center justify-between h-16">          <!-- Logo/Brand -->
           <div class="flex-shrink-0">
             <a routerLink="/" class="flex items-center hover:opacity-80 transition-opacity cursor-pointer">
