@@ -23,7 +23,8 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Add DI for application services
 builder.Services.AddScoped<ITrailService, TrailService>();
@@ -68,11 +69,13 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.MapScalarApiReference(options =>
     {
         options.WithTitle("Trails API")
-            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient)
+            .WithOpenApiRoutePattern("/swagger/v1/swagger.json");
     });
 }
 

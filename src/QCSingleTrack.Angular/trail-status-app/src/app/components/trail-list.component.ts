@@ -1,453 +1,310 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule, Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, DestroyRef, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DecimalPipe, Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TrailService } from '../services/trail.service';
 import { MapService } from '../services/map.service';
+import { RegionalWeatherService } from '../services/regional-weather.service';
+import { BackdropService } from '../services/backdrop.service';
 import { TrailDto, TrailPhotoDto } from '../models/trail-dto.model';
-import { WeatherDto } from '../models/weather-dto.model';
+import { DayWeatherDto, WeatherDto } from '../models/weather-dto.model';
+import { byStatusThenName, statusDetail, statusDotClass, statusOf, statusSince, statusTextClass } from '../models/trail-status';
+
+/** Matches Tailwind's lg breakpoint, where details sit beside the list instead of in a sheet. */
+const DESKTOP_MIN_WIDTH = 1024;
+
+interface RainDay {
+  label: string;
+  inches: number;
+}
 
 @Component({
   selector: 'app-trail-list',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [DecimalPipe],
   templateUrl: './trail-list.component.html',
-  styles: [`
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes scaleIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .animate-fadeIn {
-      animation: fadeIn 0.2s ease-out;
-    }
-
-    .animate-scaleIn {
-      animation: scaleIn 0.25s ease-out;
-    }
-
-    /* Custom scrollbar for gallery */
-    .overflow-y-auto::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .overflow-y-auto::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 10px;
-    }
-
-    .overflow-y-auto::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 10px;
-    }
-
-    .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-      background: #555;
-    }
-
-    :host-context(.dark) .overflow-y-auto::-webkit-scrollbar-track {
-      background: #374151;
-    }
-
-    :host-context(.dark) .overflow-y-auto::-webkit-scrollbar-thumb {
-      background: #6b7280;
-    }
-
-    :host-context(.dark) .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-      background: #9ca3af;
-    }
-  `]
+  changeDetection: ChangeDetectionStrategy.Eager
 })
-export class TrailListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class TrailListComponent implements OnInit, OnDestroy {
+  private readonly trailService = inject(TrailService);
+  private readonly mapService = inject(MapService);
+  private readonly regionalWeather = inject(RegionalWeatherService);
+  private readonly backdrop = inject(BackdropService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
+  private readonly destroyRef = inject(DestroyRef);
+
+  @ViewChild('map') private mapEl?: ElementRef<HTMLElement>;
+
   trails: TrailDto[] = [];
-  selectedTrail: TrailDto | null = null;
   loading = true;
   error: string | null = null;
-  linkCopied = false;
-  mapInitialized = false;
-  selectedImage: TrailPhotoDto | null = null;
-  currentImageIndex: number = -1;
-  weatherData: WeatherDto | null = null;
+
+  selectedTrail: TrailDto | null = null;
+  sheetOpen = false;
+  weather: WeatherDto | null = null;
   weatherLoading = false;
-  weatherError: string | null = null;
+  weatherError = false;
+  linkCopied = false;
 
-  constructor(
-    private trailService: TrailService,
-    private mapService: MapService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}  ngOnInit(): void {
+  now = new Date();
+
+  selectedImage: TrailPhotoDto | null = null;
+  currentImageIndex = -1;
+
+  private routeTrailId: number | null = null;
+  private openedFromList = false;
+  private clockTimer?: ReturnType<typeof setInterval>;
+  private mapTimers: ReturnType<typeof setTimeout>[] = [];
+
+  readonly statusDetail = statusDetail;
+  readonly statusDotClass = statusDotClass;
+  readonly statusTextClass = statusTextClass;
+  readonly statusOf = statusOf;
+
+  ngOnInit(): void {
     this.loadTrails();
-    
-    // Listen for route parameter changes
-    this.route.paramMap.subscribe(params => {
-      const trailId = params.get('id');
-      if (trailId && this.trails.length > 0) {
-        this.selectTrailById(parseInt(trailId, 10));
-      }
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      const id = params.get('id');
+      this.routeTrailId = id ? parseInt(id, 10) : null;
+      this.applyRoute();
     });
-  }
-
-  ngAfterViewInit(): void {
-    // Initialize map after view is ready
-    setTimeout(() => {
-      this.initializeMap();
-    }, 0);
+    this.clockTimer = setInterval(() => (this.now = new Date()), 60_000);
   }
 
   ngOnDestroy(): void {
-    // Clean up map resources
+    this.backdrop.status.set(null);
+    clearInterval(this.clockTimer);
+    this.mapTimers.forEach(clearTimeout);
     this.mapService.destroy();
+    this.lockScroll(false);
   }
 
-
-  loadTrails(): void {
+  private loadTrails(): void {
     this.loading = true;
-    this.error = null;      this.trailService.getTrails().subscribe({      next: (trails) => {
-        this.trails = (trails || []).sort((a, b) => a.trailName.localeCompare(b.trailName));
-        
-        // Check for route parameter first
-        const trailId = this.route.snapshot.paramMap.get('id');
-        if (trailId) {
-          this.selectTrailById(parseInt(trailId, 10), false); // Don't update URL since we're already here
-        }
-        // Don't auto-select first trail - let user choose
-        
+    this.error = null;
+    this.trailService.getTrails().subscribe({
+      next: trails => {
+        this.trails = (trails || []).sort(byStatusThenName);
         this.loading = false;
-          // Initialize map after trails are loaded
-        setTimeout(() => {
-          if (!this.mapInitialized) {
-            this.initializeMap();
-          }
-        }, 100);
+        this.applyRoute();
+        this.loadRegionalWeather();
       },
-      error: (err) => {
-        this.error = 'Failed to load trail data. Please check if the API is running.';
+      error: err => {
+        this.error = "Couldn't load trail status. Check your connection and try again.";
         this.loading = false;
         console.error('Error loading trails:', err);
       }
     });
   }
-  private initializeMap(): void {
-    try {      const mapElement = document.getElementById('trail-map');
-      
-      if (!mapElement) {
-        console.error('Map element not found!');
-        return;
-      }
-        this.mapService.initMap('trail-map');
-      this.mapInitialized = true;
-        if (this.trails.length > 0) {        this.mapService.addTrailMarkers(this.trails, this.selectedTrail || undefined);
-      }
-    } catch (error) {
-      console.error('Failed to initialize map:', error);
-    }
+
+  retry(): void {
+    this.loadTrails();
   }
 
-  getGlobalStatus(): string {
-    if (this.trails.length === 0) return 'No Data Available';
-    
-    const closedCount = this.trails.filter(t => (t.currentStatus || 'Open') === 'Closed').length;
-    const cautionCount = this.trails.filter(t => (t.currentStatus || 'Open') === 'Caution').length;
-    
-    if (closedCount === 0 && cautionCount === 0) {
-      return 'All Trails Open';
-    } else if (closedCount > 0) {
-      return `${closedCount} Trail${closedCount > 1 ? 's' : ''} Closed`;
+  // ---- List ----
+
+  get openCount(): number {
+    return this.trails.filter(t => statusOf(t) === 'Open').length;
+  }
+
+  /** The most recent status change, e.g. "Sunderbruch Park closed Oct 2". */
+  get latestChange(): string | null {
+    let latest: { trail: TrailDto; since: Date } | null = null;
+    for (const trail of this.trails) {
+      const since = statusSince(trail, this.now);
+      if (since && (!latest || since > latest.since)) latest = { trail, since };
+    }
+    if (!latest) return null;
+    const verb = statusOf(latest.trail) === 'Freeze/Thaw' ? 'went freeze/thaw' : statusOf(latest.trail).toLowerCase();
+    return `${latest.trail.trailName} ${verb} ${this.relativeDay(latest.since)}`;
+  }
+
+  get regionalRain(): string | null {
+    const weather = this.regionalWeather.weather();
+    if (!weather) return null;
+    const days = this.rainDays(weather);
+    const total = days.reduce((sum, d) => sum + d.inches, 0);
+    return total < 0.01 ? `No rain in ${days.length} days` : `${total.toFixed(1)}" rain in ${days.length} days`;
+  }
+
+  private loadRegionalWeather(): void {
+    const reference = this.trails.find(t => t.latitude && t.longitude);
+    if (reference) this.regionalWeather.load(reference.trailId);
+  }
+
+  // ---- Selection and routing ----
+
+  openTrail(trail: TrailDto): void {
+    this.openedFromList = true;
+    // Replace rather than push when switching trails, so closing always returns to the list.
+    this.router.navigate(['/trails', trail.trailId], { replaceUrl: this.routeTrailId !== null });
+  }
+
+  closeSheet(): void {
+    if (this.openedFromList) {
+      this.location.back();
     } else {
-      return `${cautionCount} Trail${cautionCount > 1 ? 's' : ''} with Caution`;
+      this.router.navigate(['/'], { replaceUrl: true });
     }
   }
 
-  getOpenTrailsCount(): number {
-    return this.trails.filter(t => (t.currentStatus || 'Open') === 'Open').length;
+  private applyRoute(): void {
+    if (this.loading) return;
+
+    if (this.routeTrailId === null) {
+      this.openedFromList = false;
+      this.sheetOpen = false;
+      this.backdrop.status.set(null);
+      this.lockScroll(false);
+      return;
+    }
+
+    const trail = this.trails.find(t => t.trailId === this.routeTrailId);
+    if (!trail) {
+      this.router.navigate(['/'], { replaceUrl: true });
+      return;
+    }
+    this.select(trail);
   }
 
-  getClosedTrailsCount(): number {
-    return this.trails.filter(t => (t.currentStatus || 'Open') === 'Closed').length;
-  }
-
-  getCautionTrailsCount(): number {
-    return this.trails.filter(t => (t.currentStatus || 'Open') === 'Caution').length;
-  }
-  getAggregateCountDisplay(): string {
-    if (this.trails.length === 0) return 'No trail data available';
-    
-    const openCount = this.getOpenTrailsCount();
-    const closedCount = this.getClosedTrailsCount();
-    const cautionCount = this.getCautionTrailsCount();
-    
-    const parts: string[] = [];
-    
-    if (openCount > 0) {
-      parts.push(`${openCount} Open Trail${openCount > 1 ? 's' : ''}`);
-    }
-    if (cautionCount > 0) {
-      parts.push(`${cautionCount} Caution Trail${cautionCount > 1 ? 's' : ''}`);
-    }
-    if (closedCount > 0) {
-      parts.push(`${closedCount} Closed Trail${closedCount > 1 ? 's' : ''}`);
-    }
-    
-    return parts.join(' & ');
-  }  getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case 'Open': return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border border-green-400 dark:border-green-600';
-      case 'Closed': return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border border-red-400 dark:border-red-600';
-      case 'Caution': return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-400 dark:border-yellow-600';
-      case 'Freeze/Thaw': return 'bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200 border border-cyan-400 dark:border-cyan-600';
-      default: return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600';
-    }
-  }  getTrailCardClass(status: string, isSelected: boolean = false): string {
-    let baseClass = '';
-    switch (status) {
-      case 'Open': 
-        baseClass = isSelected ? 'bg-gradient-to-r from-green-200 to-green-500 dark:from-green-800 dark:to-green-600 border-green-500 dark:border-green-400 shadow-lg transform scale-y-110' : 'bg-green-300 dark:bg-green-800 border-green-400 dark:border-green-600'; 
-        break;
-      case 'Closed': 
-        baseClass = isSelected ? 'bg-gradient-to-r from-red-200 to-red-500 dark:from-red-800 dark:to-red-600 border-red-500 dark:border-red-400 shadow-lg transform scale-y-110' : 'bg-red-300 dark:bg-red-800 border-red-400 dark:border-red-600'; 
-        break;
-      case 'Caution': 
-        baseClass = isSelected ? 'bg-gradient-to-r from-yellow-200 to-yellow-500 dark:from-yellow-800 dark:to-yellow-600 border-yellow-500 dark:border-yellow-400 shadow-lg transform scale-y-110' : 'bg-yellow-300 dark:bg-yellow-800 border-yellow-400 dark:border-yellow-600'; 
-        break;
-      case 'Freeze/Thaw': 
-        baseClass = isSelected ? 'bg-gradient-to-r from-cyan-200 to-cyan-500 dark:from-cyan-800 dark:to-cyan-600 border-cyan-500 dark:border-cyan-400 shadow-lg transform scale-y-110' : 'bg-cyan-300 dark:bg-cyan-800 border-cyan-400 dark:border-cyan-600'; 
-        break;
-      default: 
-        baseClass = isSelected ? 'bg-gradient-to-r from-gray-200 to-gray-400 dark:from-gray-700 dark:to-gray-600 border-gray-400 dark:border-gray-500 shadow-lg transform scale-y-110' : 'bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600'; 
-        break;
-    }
-    
-    return baseClass;
-  }
-  getStatusBannerClass(status: string): string {
-    switch (status) {
-      case 'Open': return 'bg-green-600';
-      case 'Closed': return 'bg-red-600';
-      case 'Caution': return 'bg-yellow-600';
-      default: return 'bg-gray-500';
-    }
-  }
-  getChevronClass(status: string): string {
-    switch (status) {
-      case 'Open': return 'text-black dark:text-white';
-      case 'Closed': return 'text-black dark:text-white';
-      case 'Caution': return 'text-black dark:text-white';
-      default: return 'text-black dark:text-white';
-    }
-  }  selectTrail(trail: TrailDto): void {
+  private select(trail: TrailDto): void {
+    const changed = this.selectedTrail !== trail;
     this.selectedTrail = trail;
-    
-    // Update URL to reflect selected trail
-    this.updateUrlForSelectedTrail(trail.trailId);
-    
-    // Highlight trail on map
-    if (this.mapInitialized) {
-      this.mapService.highlightTrail(trail);
-    }
+    this.sheetOpen = true;
+    this.backdrop.status.set(statusOf(trail));
+    this.lockScroll(!this.isDesktop());
+    if (!changed) return;
 
-    // Load weather data for selected trail
-    this.loadWeatherData(trail.trailId);
-
-    // Scroll to trail details on mobile
-    this.scrollToDetailsOnMobile();
+    this.loadWeather(trail);
+    this.mapTimers.forEach(clearTimeout);
+    this.mapTimers = [
+      setTimeout(() => this.mapEl && this.mapService.showTrail(this.mapEl.nativeElement, trail)),
+      // The sheet slides up over 300ms; let Leaflet re-measure once it lands.
+      setTimeout(() => this.mapService.refreshSize(), 350)
+    ];
   }
 
-  private loadWeatherData(trailId: number): void {
+  private loadWeather(trail: TrailDto): void {
+    this.weather = null;
+    this.weatherError = false;
     this.weatherLoading = true;
-    this.weatherError = null;
-    this.weatherData = null;
-
-    this.trailService.getTrailWeather(trailId).subscribe({
-      next: (data) => {
-        this.weatherData = data;
+    this.trailService.getTrailWeather(trail.trailId).subscribe({
+      next: data => {
+        if (this.selectedTrail !== trail) return;
+        this.weather = data;
         this.weatherLoading = false;
       },
-      error: (err) => {
-        this.weatherError = 'Failed to load weather data';
+      error: err => {
+        if (this.selectedTrail !== trail) return;
+        this.weatherError = true;
         this.weatherLoading = false;
         console.error('Error loading weather:', err);
       }
     });
   }
 
-  private scrollToDetailsOnMobile(): void {
-    // Check if we're in mobile view (less than lg breakpoint - 1024px)
-    if (window.innerWidth < 1024) {
-      // Small delay to ensure DOM is updated
-      setTimeout(() => {
-        const detailsElement = document.getElementById('trail-details');
-        if (detailsElement) {
-          const headerOffset = 80; // Account for fixed header (64px) + some padding
-          const elementPosition = detailsElement.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
-    }
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.selectedImage) this.closeImageModal();
+    else if (this.sheetOpen && !this.isDesktop()) this.closeSheet();
   }
 
-  scrollToTop(): void {
-    const headerOffset = 80;
-    window.scrollTo({
-      top: headerOffset,
-      behavior: 'smooth'
-    });
-  }selectTrailById(trailId: number, updateUrl: boolean = true): void {
-    const trail = this.trails.find(t => t.trailId === trailId);
-    if (trail) {
-      this.selectedTrail = trail;
-      
-      // Highlight trail on map
-      if (this.mapInitialized) {
-        this.mapService.highlightTrail(trail);
+  private isDesktop(): boolean {
+    return window.innerWidth >= DESKTOP_MIN_WIDTH;
+  }
+
+  private lockScroll(lock: boolean): void {
+    document.body.style.overflow = lock ? 'hidden' : '';
+  }
+
+  // ---- Details ----
+
+  get selectedSince(): string | null {
+    if (!this.selectedTrail) return null;
+    const since = statusSince(this.selectedTrail, this.now);
+    return since ? `since ${this.relativeDay(since)}` : null;
+  }
+
+  get selectedRain(): RainDay[] {
+    return this.weather ? this.rainDays(this.weather) : [];
+  }
+
+  get selectedRainTotal(): number {
+    return this.selectedRain.reduce((sum, d) => sum + d.inches, 0);
+  }
+
+  rainBarHeight(inches: number): number {
+    const max = Math.max(1, ...this.selectedRain.map(d => d.inches));
+    return inches > 0 ? Math.max(6, Math.round((inches / max) * 48)) : 3;
+  }
+
+  directionsUrl(trail: TrailDto): string {
+    return `https://www.google.com/maps/dir/?api=1&destination=${trail.latitude},${trail.longitude}`;
+  }
+
+  async share(trail: TrailDto): Promise<void> {
+    const url = `${window.location.origin}/trails/${trail.trailId}`;
+    const status = statusOf(trail).toLowerCase();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `${trail.trailName} is ${status}`, text: `${trail.trailName} is ${status} on QC Bike Trails`, url });
+      } catch {
+        // The user dismissed the share sheet.
       }
-
-      // Load weather data for selected trail
-      this.loadWeatherData(trail.trailId);
-      
-      if (updateUrl) {
-        this.updateUrlForSelectedTrail(trailId);
-      }
-
-      // Scroll to trail details on mobile
-      this.scrollToDetailsOnMobile();
-    } else {
-      // Trail not found - redirect to trails list without ID
-      console.warn(`Trail with ID ${trailId} not found`);
-      if (this.trails.length > 0) {
-        this.selectTrail(this.trails[0]);
-      } else {
-        this.router.navigate(['/trails']);
-      }
+      return;
     }
-  }
-  private updateUrlForSelectedTrail(trailId: number): void {
-    // Update URL without triggering navigation
-    this.router.navigate(['/trails', trailId]);
-  }
-
-
-  getLastUpdateTime(): Date | null {
-    if (this.trails.length === 0) return null;
-    
-    const dates = this.trails.map(t => new Date(t.lastScrapedTime));
-    return new Date(Math.max(...dates.map(d => d.getTime())));
-  }
-
-  formatLastScrapedTime(lastScrapedTime: string): string {
-    try {
-      const date = new Date(lastScrapedTime);
-      return date.toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      });
-    } catch {
-      return 'Unknown';
-    }
-  }
-
-  getShareableUrl(trail: TrailDto): string {
-    return `${window.location.origin}/trails/${trail.trailId}`;
-  }
-  async copyTrailLink(trail: TrailDto): Promise<void> {
-    const url = this.getShareableUrl(trail);
     try {
       await navigator.clipboard.writeText(url);
-      this.showCopyFeedback();
-      console.log('Trail link copied to clipboard:', url);
-    } catch (error) {
-      console.error('Failed to copy link:', error);
-      // Fallback for older browsers
-      this.fallbackCopyTextToClipboard(url);
-      this.showCopyFeedback();
-    }
-  }
-
-  private showCopyFeedback(): void {
-    this.linkCopied = true;
-    setTimeout(() => {
-      this.linkCopied = false;
-    }, 2000);
-  }
-
-  private fallbackCopyTextToClipboard(text: string): void {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.top = '0';
-    textArea.style.left = '0';
-    textArea.style.position = 'fixed';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-      document.execCommand('copy');
-      console.log('Fallback: Trail link copied to clipboard');
+      this.linkCopied = true;
+      setTimeout(() => (this.linkCopied = false), 2000);
     } catch (err) {
-      console.error('Fallback: Could not copy text: ', err);
+      console.error('Failed to copy link:', err);
     }
-
-    document.body.removeChild(textArea);
   }
 
-  openImageModal(photo: TrailPhotoDto, index: number): void {
-    this.selectedImage = photo;
+  formatTime(localIso: string): string {
+    // Open-Meteo returns local wall-clock time without a zone, which Date parses as local.
+    return new Date(localIso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  }
+
+  private rainDays(weather: WeatherDto): RainDay[] {
+    const days: DayWeatherDto[] = [...weather.previousDays].sort((a, b) => a.date.localeCompare(b.date));
+    return [
+      ...days.map(d => ({ label: new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' }), inches: d.averagePrecipitation })),
+      { label: 'Today', inches: weather.today.averagePrecipitation }
+    ];
+  }
+
+  private relativeDay(date: Date): string {
+    const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    const days = Math.round((startOfDay(this.now) - startOfDay(date)) / 86_400_000);
+    if (days === 0) return 'today';
+    if (days === 1) return 'yesterday';
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  // ---- Photo lightbox ----
+
+  openImageModal(index: number): void {
+    const photos = this.selectedTrail?.photos;
+    if (!photos?.[index]) return;
+    this.selectedImage = photos[index];
     this.currentImageIndex = index;
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
   }
 
   closeImageModal(): void {
     this.selectedImage = null;
     this.currentImageIndex = -1;
-    document.body.style.overflow = ''; // Restore scrolling
-  }
-
-  formatSunsetTime(sunset: string): string {
-    // Extract just the time portion (HH:MM) and convert to 12-hour format
-    const timePart = sunset.includes('T') ? sunset.split('T')[1].substring(0, 5) : sunset.substring(0, 5);
-    const [hours, minutes] = timePart.split(':');
-    const hour = parseInt(hours, 10);
-    const hour12 = hour > 12 ? hour - 12 : hour;
-    return `${hour12}:${minutes} PM`;
   }
 
   nextImage(event: Event): void {
     event.stopPropagation();
-    if (!this.selectedTrail?.photos) return;
-    
-    const nextIndex = this.currentImageIndex + 1;
-    if (nextIndex < this.selectedTrail.photos.length) {
-      this.selectedImage = this.selectedTrail.photos[nextIndex];
-      this.currentImageIndex = nextIndex;
-    }
+    this.openImageModal(this.currentImageIndex + 1);
   }
 
   previousImage(event: Event): void {
     event.stopPropagation();
-    if (!this.selectedTrail?.photos) return;
-    
-    const prevIndex = this.currentImageIndex - 1;
-    if (prevIndex >= 0) {
-      this.selectedImage = this.selectedTrail.photos[prevIndex];
-      this.currentImageIndex = prevIndex;
-    }
+    this.openImageModal(this.currentImageIndex - 1);
   }
 }

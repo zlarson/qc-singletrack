@@ -4,6 +4,8 @@ export interface TrailPhotoDto {
   caption: string | null;
 }
 
+export type TrailStatus = 'Open' | 'Closed' | 'Caution' | 'Freeze/Thaw';
+
 export interface TrailDto {
   trailId: number;
   trailName: string;
@@ -11,12 +13,11 @@ export interface TrailDto {
   shortDescription: string | null;
   latitude: number;
   longitude: number;
-  currentStatus?: 'Open' | 'Closed' | 'Caution';
-  currentSource: string;
+  /** Null for trails FORC doesn't report on; those are treated as always open. */
+  currentStatus?: TrailStatus | null;
+  currentSource: string | null;
   currentReason: string | null;
-  lastScrapedTime: string;
+  /** UTC time the status last changed (the scraper only writes it on a change). */
+  lastScrapedTime: string | null;
   photos?: TrailPhotoDto[];
-  // These might not be in your current API - we can add them later
-  rain24h?: number;
-  currentTemp?: number;
 }

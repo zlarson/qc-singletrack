@@ -1,19 +1,24 @@
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Builder;
+using Microsoft.ApplicationInsights;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using QCSingleTrack.Infrastructure.Data;
 using QCSingleTrack.Application.Services;
 using QCSingleTrack.Application.Settings;
+using QCSingleTrack.Infrastructure.Data;
+using QCSingleTrack.TrailStatusScraperConsole;
 
-var builder = FunctionsApplication.CreateBuilder(args);
+// Use the exe's folder as the content root so appsettings.json is found when run from Task Scheduler
+// (whose working directory defaults to C:\Windows\System32).
+var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory,
+});
 
-// Load optional appsettings.json (local development) so appsettings can be used if present
-builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-builder.ConfigureFunctionsWebApplication();
+// Host.CreateApplicationBuilder already loads appsettings.json, appsettings.{Environment}.json,
+// user secrets (Development only), environment variables and command-line args.
+builder.Configuration.AddUserSecrets<ScrapeJob>(optional: true);
 
 builder.Services
     .AddOptions<ScraperOptions>()
@@ -49,8 +54,8 @@ builder.Services.AddHttpClient("ScraperClient", (sp, client) =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrWhiteSpace(connectionString))
 {
-    // Fall back to env value used by Functions (Values section in local.settings.json)
-    connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+    Console.Error.WriteLine("ConnectionStrings:DefaultConnection is not configured.");
+    return 1;
 }
 
 builder.Services.AddDbContextFactory<TrailStatusDbContext>(options =>
@@ -69,12 +74,24 @@ builder.Services.AddDbContextFactory<TrailStatusDbContext>(options =>
 // Application layer services
 builder.Services.AddScoped<ITrailScraper, AngleSharpTrailScraper>();
 builder.Services.AddScoped<ITrailService, TrailService>();
+builder.Services.AddScoped<ScrapeJob>();
 
-//// Application Insights - worker service integration reads APPLICATIONINSIGHTS_CONNECTION_STRING env var
-builder.Services
-    .AddApplicationInsightsTelemetryWorkerService()
-    .ConfigureFunctionsApplicationInsights();
+// Application Insights - reads APPLICATIONINSIGHTS_CONNECTION_STRING (env var or config); no-op if absent
+builder.Services.AddApplicationInsightsTelemetryWorkerService();
 
-// Optionally configure SDK logging/telemetry further via TelemetryConfiguration or ILogger filters.
+using var host = builder.Build();
 
-builder.Build().Run();
+bool success;
+using (var scope = host.Services.CreateScope())
+{
+    success = await scope.ServiceProvider.GetRequiredService<ScrapeJob>().RunAsync();
+}
+
+// Short-lived process: flush telemetry before exiting so it isn't lost
+var telemetry = host.Services.GetService<TelemetryClient>();
+if (telemetry != null)
+{
+    await telemetry.FlushAsync(CancellationToken.None);
+}
+
+return success ? 0 : 1;

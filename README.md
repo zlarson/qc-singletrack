@@ -115,9 +115,9 @@ Service: [src/QCSingleTrack/QCSingleTrack.Application/Services/OpenMeteoWeatherS
 
 ### Frontend
 
-- Angular 17
+- Angular 22
 - TypeScript
-- Tailwind CSS
+- Tailwind CSS 4
 - Leaflet/OpenStreetMap
 
 ---
@@ -142,7 +142,7 @@ Current `.gitignore` has been updated to exclude common sensitive/local artifact
 ## Prerequisites
 
 - .NET SDK 10
-- Node.js 18+ and npm
+- Node.js 24.15+ and npm
 - SQL Server (local or Azure SQL)
 - Azure Functions Core Tools (for local Functions host)
 

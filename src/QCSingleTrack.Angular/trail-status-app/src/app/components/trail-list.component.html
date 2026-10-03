@@ -1,281 +1,200 @@
-<div class="container mx-auto px-4 py-6">
-  <!-- Loading State -->
-  <div *ngIf="loading" class="text-center py-8">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-    <p class="mt-4 text-gray-600 dark:text-gray-300">Loading Trails ...</p>
-  </div>
+<div class="mx-auto max-w-6xl px-3 pb-[calc(env(safe-area-inset-bottom)+2rem)] lg:grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-8 lg:px-4">
+  <!-- Summary and trail list -->
+  <section>
+    <div class="px-1 pt-6 pb-5">
+      <p class="text-sm text-dim">Quad Cities trails</p>
 
-  <!-- Error State -->
-  <div *ngIf="error" class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-6">
-    <p class="font-bold">Error loading trail data:</p>
-    <p>{{ error }}</p>
-  </div>
-
-  <!-- Master-Detail Layout -->
-  <div *ngIf="!loading && !error" class="flex flex-col lg:flex-row gap-6">
-    <!-- Left: Trail List (narrow on desktop, full width on mobile) -->
-    <div class="w-full lg:w-1/3 space-y-3">
-     
-      <div *ngFor="let trail of trails"
-           [ngClass]="getTrailCardClass(trail.currentStatus || 'Open', trail === selectedTrail)"
-           class="rounded-lg shadow-sm border hover:shadow-md transition-all cursor-pointer p-3"
-           (click)="selectTrail(trail)">
-        <div class="flex items-center justify-between">
-          <div class="flex-1 min-w-0">
-            <h3 class="font-semibold text-gray-900 dark:text-gray-100 truncate">{{ trail.trailName }}</h3>
-          </div>
-          <div class="flex items-center gap-2 flex-shrink-0 ml-2">
-            <span [ngClass]="getStatusBadgeClass(trail.currentStatus || 'Open')" 
-                  class="px-2 py-1 rounded-full text-xs font-medium uppercase">
-              {{ trail.currentStatus || 'Open' }}
-            </span>
-            <i [ngClass]="getChevronClass(trail.currentStatus || 'Open')" class="fas fa-chevron-right"></i>
-          </div>
-        </div>
-      </div>
+      @if (loading) {
+        <div class="mt-4 h-16 w-40 animate-pulse rounded-2xl bg-card/90"></div>
+        <div class="mt-3 h-4 w-56 animate-pulse rounded bg-card/90"></div>
+      } @else if (!error) {
+        <h1 class="mt-3 flex items-baseline gap-2">
+          <span class="text-7xl font-bold leading-none tracking-tight text-brand">{{ openCount }}</span>
+          <span class="text-2xl font-medium text-dim">/ {{ trails.length }} open</span>
+        </h1>
+        <p class="mt-2 text-sm text-dim">
+          {{ latestChange }}@if (latestChange && regionalRain) {<span> · </span>}{{ regionalRain }}
+        </p>
+      }
     </div>
 
-    <!-- Right: Trail Details (full width on mobile, flex-1 on desktop) -->
-    <div id="trail-details" class="w-full lg:flex-1 p-6">
-      <div *ngIf="!selectedTrail" class="text-center text-gray-500 dark:text-gray-400 py-12">
-        <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-        </svg>
-        <h3 class="text-lg font-medium dark:text-gray-300">Select a trail</h3>
-        <p class="dark:text-gray-400">Choose a trail from the list to view its details</p>
+    @if (error) {
+      <div class="rounded-2xl border border-status-closed/40 bg-card/90 p-4">
+        <p class="text-sm">{{ error }}</p>
+        <button type="button" (click)="retry()" class="mt-3 rounded-xl border border-line px-4 py-2 text-sm hover:bg-line">Try again</button>
       </div>
+    }
 
-      <div *ngIf="selectedTrail">
-        <!-- Trail Name Header -->
-        <div class="mb-4 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ selectedTrail.trailName }}</h2>
-            <!-- Share button -->
-            <div class="relative">
-              <button 
-                (click)="copyTrailLink(selectedTrail)" 
-                [class]="linkCopied ? 'p-2 text-green-600 bg-green-50 dark:bg-green-900 rounded-full transition-colors' : 'p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-full transition-colors'"
-                title="Copy link to this trail">
-                <i *ngIf="!linkCopied" class="fas fa-share-nodes w-5 h-5"></i>
-                <svg *ngIf="linkCopied" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </button>
-              <!-- Copy confirmation tooltip -->
-              <div *ngIf="linkCopied" 
-                   class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                Link copied!
-                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-green-600"></div>
-              </div>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <span [ngClass]="getStatusBadgeClass(selectedTrail.currentStatus || 'Open')" 
-                  class="px-4 py-2 rounded-full text-base font-semibold uppercase">
-              {{ selectedTrail.currentStatus || 'Open' }}
-            </span>
-            <!-- Back to top button (mobile only) -->
-            <button 
-              (click)="scrollToTop()" 
-              class="lg:hidden p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900 rounded-full transition-colors"
-              title="Back to trail list">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-              </svg>
+    @if (loading) {
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <div class="mb-2 h-[3.75rem] animate-pulse rounded-2xl bg-card/90"></div>
+      }
+    }
+
+    @if (!loading && !error) {
+      <ul>
+        @for (trail of trails; track trail.trailId) {
+          <li class="mb-2">
+            <button
+              type="button"
+              (click)="openTrail(trail)"
+              [attr.aria-current]="trail === selectedTrail && sheetOpen ? 'true' : null"
+              class="flex w-full items-center gap-3.5 rounded-2xl bg-card/90 px-4 py-3.5 text-left ring-paper/15 transition hover:bg-card active:scale-[0.99] lg:aria-[current=true]:ring-1"
+              [class.opacity-70]="statusOf(trail) === 'Closed'">
+              <span class="size-3 shrink-0 rounded-full" [class]="statusDotClass(trail)"></span>
+              <span class="min-w-0 flex-1">
+                <span class="block pt-0.5 font-display text-sm leading-snug uppercase tracking-[0.05em]">{{ trail.trailName }}</span>
+                <span class="block truncate text-xs text-dim">{{ statusDetail(trail) }}</span>
+              </span>
+              <i class="fa-solid fa-chevron-right text-xs text-dim"></i>
             </button>
-          </div>
-        </div>
+          </li>
+        }
+      </ul>
+      <p class="mt-8 px-1 text-xs text-dim">
+        Trail status from <a href="https://www.qcforc.org/" target="_blank" rel="noopener noreferrer" class="underline hover:text-paper">Friends of Off-Road Cycling</a>, checked every 30 minutes.
+      </p>
+    }
+  </section>
 
-        <!-- Weather Info Bar -->
-        <div *ngIf="weatherLoading" class="mb-4 text-lg text-gray-500 dark:text-gray-400">
-          <i class="fas fa-spinner fa-spin mr-2"></i>Loading Weather Data...
-        </div>
-        <div *ngIf="weatherData && !weatherLoading" class="mb-4 flex items-center gap-4 text-lg text-gray-600 dark:text-gray-400">
-          <div>
-            <i class="fas fa-temperature-half mr-1"></i>
-            <span class="font-medium">{{ weatherData.today.averageTemperature.toFixed(1) }}°F</span>
-          </div>
-          <div>
-            <i class="fa-solid fa-cloud-rain mr-1"></i>
-            <span class="font-medium">{{ weatherData.today.averagePrecipitation.toFixed(2) }}"</span>
-          </div>
-          <div>
-            <i class="fas fa-sun mr-1"></i>
-            <span class="font-medium">{{ formatSunsetTime(weatherData.today.sunset) }}</span>
-          </div>
-        </div>
+  <!-- Scrim behind the bottom sheet on phones -->
+  @if (sheetOpen) {
+    <div (click)="closeSheet()" class="fixed inset-0 z-40 animate-fade-in bg-black/60 lg:hidden" aria-hidden="true"></div>
+  }
 
-        <!-- Description -->
-        <div class="mb-6">
-          <!-- Status Reason (if available) -->
-          <div *ngIf="selectedTrail.currentReason" class="mb-2">
-            <p class="text-gray-500 dark:text-gray-400 text-sm"><span class="font-bold">Status Reason: {{ selectedTrail.currentReason }}</span></p>
-          </div>
-          <p class="text-gray-700 dark:text-gray-300 text-base leading-relaxed">{{ selectedTrail.shortDescription || selectedTrail.description || 'No description available' }}</p>
-        </div>
+  <!-- Trail details: a bottom sheet on phones, a sticky side panel on desktop -->
+  <aside
+    class="fixed inset-x-0 bottom-0 z-50 max-h-[88vh] overflow-y-auto overscroll-contain rounded-t-3xl border-t border-line bg-card px-5 pt-3 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] transition-transform duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]
+           lg:sticky lg:top-20 lg:z-auto lg:mt-6 lg:max-h-[calc(100vh-6rem)] lg:translate-y-0 lg:self-start lg:rounded-3xl lg:border lg:bg-card/90 lg:p-6"
+    [class.translate-y-full]="!sheetOpen"
+    [attr.aria-hidden]="!sheetOpen ? 'true' : null"
+    aria-label="Trail details">
+    @if (selectedTrail; as trail) {
+      <div class="mx-auto mb-4 h-1 w-10 rounded-full bg-line lg:hidden"></div>
 
-        <!-- Map Section -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-            <i class="fa-solid fa-location-crosshairs mr-2"></i>Location
-          </h3>
-          <div id="trail-map" class="rounded-lg h-80 w-full bg-gray-100 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center relative z-0">
-            <p class="text-gray-500 dark:text-gray-400" *ngIf="!mapInitialized">Loading map...</p>
-          </div>
-        </div>
-
-        <!-- Photo Gallery Section -->
-        <div class="mb-6" *ngIf="selectedTrail.photos && selectedTrail.photos.length > 0">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-            <i class="fa-solid fa-camera mr-2"></i>Photos ({{ selectedTrail.photos.length }})
-          </h3>
-          <div class="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-gray-200 dark:border-neutral-700 p-4">
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-96 overflow-y-auto justify-items-center px-2">
-              <div 
-                *ngFor="let photo of selectedTrail.photos; let i = index"
-                (click)="openImageModal(photo, i)"
-                class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group bg-gray-200 dark:bg-gray-700 shadow-md hover:shadow-xl transition-all">
-                <img 
-                  [src]="photo.thumbnailUrl || photo.photoUrl" 
-                  [alt]="photo.caption || (selectedTrail.trailName + ' photo ' + (i + 1))"
-                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  loading="lazy">
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal Overlay -->
-        <div 
-          *ngIf="selectedImage"
-          (click)="closeImageModal()"
-          class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 animate-fadeIn">
-          
-          <button 
-            (click)="closeImageModal()"
-            class="absolute top-4 right-4 z-50 text-white hover:text-gray-300 transition-colors p-2">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-
-          <button 
-            *ngIf="currentImageIndex > 0"
-            (click)="previousImage($event)"
-            class="absolute left-4 z-50 text-white hover:text-gray-300 transition-colors p-2">
-            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path>
-            </svg>
-          </button>
-
-          <button 
-            *ngIf="selectedTrail.photos && currentImageIndex < selectedTrail.photos.length - 1"
-            (click)="nextImage($event)"
-            class="absolute right-4 z-50 text-white hover:text-gray-300 transition-colors p-2">
-            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </button>
-
-          <div 
-            (click)="$event.stopPropagation()"
-            class="relative max-w-7xl max-h-[90vh] animate-scaleIn">
-            <img 
-              [src]="selectedImage.photoUrl" 
-              [alt]="selectedImage.caption || selectedTrail.trailName"
-              class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl">
-            
-            <div class="mt-4 text-center text-white">
-              <h3 class="text-xl font-semibold mb-2" *ngIf="selectedImage.caption">{{ selectedImage.caption }}</h3>
-              <p class="text-gray-300 text-sm" *ngIf="selectedTrail.photos">
-                {{ currentImageIndex + 1 }} of {{ selectedTrail.photos.length }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- More Information -->
-        <div class="space-y-6">
-          <div>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              <i class="fa-solid fa-circle-info mr-2"></i>More Information
-            </h3>
-            <div class="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-gray-200 dark:border-neutral-700 p-4 space-y-4">
-              
-              <!-- Status Information (conditional) -->
-              <div class="grid grid-cols-2 gap-4" *ngIf="selectedTrail.currentStatus">
-                <div>
-                  <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Status Source</label>
-                  <p class="text-gray-900 dark:text-gray-100">{{ selectedTrail.currentSource }}</p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Status Last Updated</label>
-                  <p class="text-gray-900 dark:text-gray-100">{{ formatLastScrapedTime(selectedTrail.lastScrapedTime) }}</p>
-                </div>
-              </div>
-
-              <!-- Weather Loading State -->
-              <div *ngIf="weatherLoading" class="text-center py-6">
-                <p class="text-gray-500 dark:text-gray-400 text-lg">
-                  <i class="fas fa-spinner fa-spin mr-2"></i>Loading Weather Data...
-                </p>
-              </div>
-
-              <!-- Weather Error State -->
-              <div *ngIf="weatherError && !weatherLoading" class="text-center py-4">
-                <svg class="w-10 h-10 mx-auto mb-2 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
-                <p class="text-red-600 dark:text-red-400 text-sm">{{ weatherError }}</p>
-              </div>
-
-              <!-- Previous Days Weather (conditional) -->
-              <div *ngIf="weatherData && !weatherLoading && weatherData.previousDays.length > 0" class="pt-2">
-                <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Previous {{ weatherData.previousDays.length }} Days Weather</h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div *ngFor="let day of weatherData.previousDays" class="rounded-lg p-3 bg-gradient-to-br from-blue-400 via-blue-300 to-blue-400 dark:from-blue-900 dark:via-blue-700 dark:to-blue-900 relative overflow-hidden">
-                    <!-- Gradient accent circles -->
-                    <div class="absolute top-0 right-0 w-20 h-20 bg-blue-200 dark:bg-blue-400 rounded-full opacity-30 dark:opacity-20 blur-xl"></div>
-                    <div class="absolute bottom-0 left-0 w-16 h-16 bg-cyan-200 dark:bg-cyan-400 rounded-full opacity-30 dark:opacity-20 blur-lg"></div>
-                    
-                    <div class="relative z-10">
-                      <div class="text-4xl font-bold text-white mb-1 text-center leading-none">{{ day.date | date:'d' }}</div>
-                      <div class="text-sm font-medium text-white mb-3 text-center">{{ day.date | date:'MMM yyyy' }}</div>
-                      <div class="flex items-center justify-center gap-3 text-sm text-white dark:text-gray-200">
-                        <div class="flex items-center gap-1">
-                          <i class="fas fa-temperature-half text-white dark:text-gray-300"></i>
-                          <span>{{ day.averageTemperature.toFixed(1) }}°F</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                          <i class="fa-solid fa-cloud-rain text-white dark:text-gray-300"></i>
-                          <span>{{ day.averagePrecipitation.toFixed(2) }}"</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                          <i class="fas fa-sun text-white dark:text-gray-300"></i>
-                          <span>{{ formatSunsetTime(day.sunset) }}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
+      <div class="flex items-start justify-between gap-3">
+        <h2 class="pt-1 font-display text-3xl font-light uppercase leading-tight tracking-[0.06em]">{{ trail.trailName }}</h2>
+        <button type="button" (click)="closeSheet()" class="-mr-2 -mt-1 rounded-full p-2 text-dim hover:text-paper lg:hidden" aria-label="Close">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
       </div>
 
-      <!-- Logo -->
-        <div style="margin-top: 50px;">
-          <div class="mb-6"></div>
-          <img src="assets/logo-black.png" alt="QC Bike Trails" class="w-1/2 lg:w-1/4 mx-auto rounded-lg shadow-sm dark:hidden">
-          <img src="assets/logo-white.png" alt="QC Bike Trails" class="w-1/2 lg:w-1/4 mx-auto rounded-lg shadow-sm hidden dark:block">
+      <div class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span class="rounded-full border px-2.5 py-0.5 text-xs font-medium lowercase" [class]="statusTextClass(trail)">{{ statusOf(trail) }}</span>
+        @if (!trail.currentStatus) {
+          <span class="text-xs text-dim">not monitored by FORC</span>
+        }
+        @if (trail.currentReason) {
+          <span class="text-xs text-dim">{{ trail.currentReason }}</span>
+        }
+        @if (selectedSince) {
+          <span class="text-xs text-dim">{{ selectedSince }}</span>
+        }
+      </div>
+
+      <!-- Weather -->
+      <div class="mt-5">
+        @if (weatherLoading) {
+          <div class="h-5 w-48 animate-pulse rounded bg-line"></div>
+          <div class="mt-4 h-20 animate-pulse rounded-xl bg-line/60"></div>
+        } @else if (weatherError) {
+          <p class="text-sm text-dim">Weather isn't available right now.</p>
+        } @else if (weather) {
+          <div class="flex flex-wrap gap-x-5 gap-y-1 text-sm">
+            <span><i class="fa-solid fa-temperature-half mr-1.5 text-dim"></i>{{ weather.today.averageTemperature | number: '1.0-0' }}°</span>
+            <span><i class="fa-solid fa-sun mr-1.5 text-dim"></i>Sunset {{ formatTime(weather.today.sunset) }}</span>
+            <span><i class="fa-solid fa-droplet mr-1.5 text-dim"></i>{{ selectedRainTotal | number: '1.0-2' }}" in {{ selectedRain.length }} days</span>
+          </div>
+          <p class="mt-4 mb-2 text-xs text-dim">Rain by day</p>
+          <div class="flex h-24 items-end gap-2">
+            @for (day of selectedRain; track day.label) {
+              <div class="flex flex-1 flex-col items-center gap-1">
+                <span class="text-[11px] text-dim">{{ day.inches > 0 ? (day.inches | number: '1.0-2') + '"' : '0' }}</span>
+                <div class="w-full rounded" [class]="day.inches > 0 ? 'bg-rain' : 'bg-line'" [style.height.px]="rainBarHeight(day.inches)"></div>
+                <span class="text-[11px] text-dim">{{ day.label }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-6 flex gap-2">
+        <a
+          [href]="directionsUrl(trail)"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand py-2.5 text-sm font-medium text-ink hover:brightness-110">
+          <i class="fa-solid fa-location-arrow"></i> Directions
+        </a>
+        <button
+          type="button"
+          (click)="share(trail)"
+          class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-line py-2.5 text-sm hover:bg-line">
+          @if (linkCopied) {
+            <i class="fa-solid fa-check text-brand"></i> Link copied
+          } @else {
+            <i class="fa-solid fa-share-nodes"></i> Share
+          }
+        </button>
+      </div>
+
+      <!-- Photos -->
+      @if (trail.photos?.length) {
+        <div class="-mx-5 mt-6 flex snap-x scroll-px-5 gap-2 overflow-x-auto [scrollbar-width:none] px-5 pb-1 lg:-mx-6 lg:scroll-px-6 lg:px-6">
+          @for (photo of trail.photos; track $index) {
+            <button type="button" (click)="openImageModal($index)" class="h-24 w-32 shrink-0 snap-start overflow-hidden rounded-xl bg-line">
+              <img
+                [src]="photo.thumbnailUrl || photo.photoUrl"
+                [alt]="photo.caption || trail.trailName + ' photo ' + ($index + 1)"
+                class="size-full object-cover"
+                loading="lazy">
+            </button>
+          }
         </div>
-    </div>
-  </div>
+      }
+
+      <!-- About the trail -->
+      @if (trail.shortDescription || trail.description; as text) {
+        <p class="mt-6 text-sm leading-relaxed text-paper/75">{{ text }}</p>
+      }
+
+      <!-- Map -->
+      <div #map class="trail-map relative z-0 mt-6 h-52 overflow-hidden rounded-2xl"></div>
+    } @else {
+      <div class="hidden py-24 text-center lg:block">
+        <i class="fa-solid fa-person-biking text-3xl text-dim"></i>
+        <p class="mt-4 font-medium">Pick a trail</p>
+        <p class="mt-1 text-sm text-dim">Weather, photos and directions show up here.</p>
+      </div>
+    }
+  </aside>
 </div>
+
+<!-- Photo lightbox -->
+@if (selectedImage && selectedTrail) {
+  <div (click)="closeImageModal()" class="fixed inset-0 z-[60] flex animate-fade-in items-center justify-center bg-black/95 p-4">
+    <button type="button" (click)="closeImageModal()" class="absolute top-4 right-4 p-2 text-paper/80 hover:text-paper" aria-label="Close photo">
+      <i class="fa-solid fa-xmark text-2xl"></i>
+    </button>
+    @if (currentImageIndex > 0) {
+      <button type="button" (click)="previousImage($event)" class="absolute left-2 p-3 text-paper/80 hover:text-paper" aria-label="Previous photo">
+        <i class="fa-solid fa-chevron-left text-2xl"></i>
+      </button>
+    }
+    @if (selectedTrail.photos && currentImageIndex < selectedTrail.photos.length - 1) {
+      <button type="button" (click)="nextImage($event)" class="absolute right-2 p-3 text-paper/80 hover:text-paper" aria-label="Next photo">
+        <i class="fa-solid fa-chevron-right text-2xl"></i>
+      </button>
+    }
+    <figure (click)="$event.stopPropagation()" class="max-h-[90vh] max-w-6xl animate-scale-in">
+      <img [src]="selectedImage.photoUrl" [alt]="selectedImage.caption || selectedTrail.trailName" class="max-h-[82vh] max-w-full rounded-xl object-contain">
+      <figcaption class="mt-3 text-center text-sm text-dim">
+        @if (selectedImage.caption) {
+          <span class="text-paper">{{ selectedImage.caption }} · </span>
+        }
+        {{ currentImageIndex + 1 }} of {{ selectedTrail.photos?.length }}
+      </figcaption>
+    </figure>
+  </div>
+}

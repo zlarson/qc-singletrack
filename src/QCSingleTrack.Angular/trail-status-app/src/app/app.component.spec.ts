@@ -1,10 +1,13 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [provideRouter([]), provideHttpClient()],
     }).compileComponents();
   });
 
@@ -20,10 +23,11 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('trail-status-app');
   });
 
-  it('should render title', () => {
+  it('should render the header and main outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, trail-status-app');
+    expect(compiled.querySelector('app-header')).toBeTruthy();
+    expect(compiled.querySelector('main router-outlet')).toBeTruthy();
   });
 });
