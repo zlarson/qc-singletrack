@@ -2,10 +2,10 @@ import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/c
 import { BackdropService } from '../services/backdrop.service';
 
 const GLOW: Record<string, string> = {
-  Open: 'bg-status-open/12',
-  Caution: 'bg-status-caution/12',
-  'Freeze/Thaw': 'bg-status-freeze/12',
-  Closed: 'bg-status-closed/12'
+  Open: 'bg-status-open/18',
+  Caution: 'bg-status-caution/18',
+  'Freeze/Thaw': 'bg-status-freeze/18',
+  Closed: 'bg-status-closed/18'
 };
 
 /**
@@ -29,5 +29,5 @@ const GLOW: Record<string, string> = {
 export class PageBackdropComponent {
   private readonly backdrop = inject(BackdropService);
 
-  readonly glowClass = computed(() => GLOW[this.backdrop.status() ?? ''] ?? 'bg-brand/12');
+  readonly glowClass = computed(() => GLOW[this.backdrop.status() ?? ''] ?? 'bg-brand/18');
 }
