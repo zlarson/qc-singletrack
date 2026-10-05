@@ -1,4 +1,3 @@
-using Azure.Identity;
 using QCSingleTrack.Application.Services;
 using QCSingleTrack.Application.Storage;
 using Scalar.AspNetCore;
@@ -43,13 +42,6 @@ builder.Services.AddTrailTableStorage(builder.Configuration);
 
 // Simple API Key middleware - do not register middleware type as a service here; it's invoked via UseMiddleware
 // builder.Services.AddSingleton<ApiKeyMiddleware>();
-
-//var keyVaultEndpoint = builder.Configuration["KeyVault:Endpoint"];
-
-//if (!string.IsNullOrWhiteSpace(keyVaultEndpoint))
-//{
-//    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultEndpoint), new DefaultAzureCredential());
-//}
 
 var app = builder.Build();
 

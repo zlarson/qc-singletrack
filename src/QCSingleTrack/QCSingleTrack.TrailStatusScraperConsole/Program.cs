@@ -1,19 +1,17 @@
 using Microsoft.ApplicationInsights;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using QCSingleTrack.Application.Services;
 using QCSingleTrack.Application.Settings;
 using QCSingleTrack.Application.Storage;
-using QCSingleTrack.Infrastructure.Data;
 using QCSingleTrack.TrailStatusScraperConsole;
 
 // Use the exe's folder as the content root so appsettings.json is found when run from Task Scheduler
 // (whose working directory defaults to C:\Windows\System32).
 var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
 {
-    // Command-line args are this tool's own commands (--migrate, --seed), not config overrides.
+    // Command-line args are this tool's own commands (--seed), not config overrides.
     ContentRootPath = AppContext.BaseDirectory,
 });
 
@@ -55,22 +53,6 @@ builder.Services.AddHttpClient("ScraperClient", (sp, client) =>
 // Storage:ConnectionString (user secrets or Azurite) takes precedence when set.
 builder.Services.AddTrailTableStorage(builder.Configuration);
 
-// --migrate copies trails from the old SQL database, so only it needs the SQL connection string.
-var migrate = args.Contains("--migrate");
-var sqlConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (migrate)
-{
-    if (string.IsNullOrWhiteSpace(sqlConnectionString))
-    {
-        Console.Error.WriteLine("--migrate needs ConnectionStrings:DefaultConnection for the SQL database.");
-        return 1;
-    }
-
-    builder.Services.AddDbContextFactory<TrailStatusDbContext>(options =>
-        options.UseSqlServer(sqlConnectionString, sqlOptions => sqlOptions.EnableRetryOnFailure()));
-    builder.Services.AddScoped<SqlTrailService>();
-}
-
 // Application layer services
 builder.Services.AddScoped<ITrailScraper, AngleSharpTrailScraper>();
 builder.Services.AddScoped<TableTrailService>();
@@ -88,11 +70,7 @@ using (var scope = host.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var seedIndex = Array.IndexOf(args, "--seed");
-    if (migrate)
-    {
-        success = await services.GetRequiredService<DataCommands>().MigrateFromSqlAsync(services.GetRequiredService<SqlTrailService>());
-    }
-    else if (seedIndex >= 0)
+    if (seedIndex >= 0)
     {
         if (seedIndex + 1 >= args.Length)
         {

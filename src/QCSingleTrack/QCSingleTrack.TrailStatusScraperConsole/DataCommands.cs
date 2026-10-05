@@ -17,15 +17,6 @@ public class DataCommands
         _logger = logger;
     }
 
-    /// <summary>--migrate: copies every trail, with its status and photos, from the SQL database.</summary>
-    public async Task<bool> MigrateFromSqlAsync(SqlTrailService sql)
-    {
-        var trails = (await sql.GetAllTrailsAsync()).ToList();
-        await _tables.UpsertTrailsAsync(trails);
-        _logger.LogInformation("Copied {Count} trails from SQL to Table Storage", trails.Count);
-        return true;
-    }
-
     /// <summary>
     /// --seed: loads trails from a saved GET /api/trails response, e.g. to give Azurite real data.
     /// The API doesn't return TrailNameForLookup, so the display name stands in for it.
