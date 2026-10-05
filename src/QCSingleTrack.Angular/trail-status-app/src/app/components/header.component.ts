@@ -9,7 +9,7 @@ import { RegionalWeatherService } from '../services/regional-weather.service';
   template: `
     <header
       class="sticky top-0 z-30 border-b pt-[env(safe-area-inset-top)] transition-[background-color,border-color,backdrop-filter] duration-300"
-      [class]="scrolled ? 'border-line bg-ink/85 backdrop-blur-md' : 'border-transparent bg-ink/5'">
+      [class]="scrolled ? 'border-line bg-ink/85 backdrop-blur-md' : 'border-transparent bg-ink/40'">
       <nav class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4">
         <a routerLink="/" class="flex shrink-0 items-center" aria-label="QC Bike Trails home">
           <img src="assets/logo-horizontal-white.png" alt="QC Bike Trails" class="h-7">
