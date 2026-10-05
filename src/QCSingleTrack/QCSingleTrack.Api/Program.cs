@@ -1,7 +1,6 @@
 using Azure.Identity;
-using Microsoft.EntityFrameworkCore;
 using QCSingleTrack.Application.Services;
-using QCSingleTrack.Infrastructure.Data;
+using QCSingleTrack.Application.Storage;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +26,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add DI for application services
-builder.Services.AddScoped<ITrailService, TrailService>();
+builder.Services.AddScoped<ITrailService, TableTrailService>();
 // Register weather service implementation (from Application layer)
 builder.Services.AddScoped<IWeatherService, OpenMeteoWeatherService>();
 // Register weather code lookup as singleton
@@ -39,21 +38,8 @@ builder.Services.AddHttpClient("OpenMeteo", client =>
     client.BaseAddress = new Uri("https://api.open-meteo.com/");
 });
 
-// DbContext factory (use same connection string as other projects -- environment-based)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
-if (!string.IsNullOrWhiteSpace(connectionString))
-{
-    builder.Services.AddDbContextFactory<TrailStatusDbContext>(options => options.UseSqlServer(connectionString,
-        sqlOptions => sqlOptions.EnableRetryOnFailure(
-        maxRetryCount: 5,
-        maxRetryDelay: TimeSpan.FromSeconds(10),
-        errorNumbersToAdd: null)));
-}
-else
-{
-    // No connection string provided: register an in-memory provider for development/testing so IDbContextFactory is available
-    builder.Services.AddDbContextFactory<TrailStatusDbContext>(options => options.UseInMemoryDatabase("TrailsInMemory"));
-}
+// Trails live in Azure Table Storage (Storage:ConnectionString for Azurite, or Storage:AccountName with managed identity)
+builder.Services.AddTrailTableStorage(builder.Configuration);
 
 // Simple API Key middleware - do not register middleware type as a service here; it's invoked via UseMiddleware
 // builder.Services.AddSingleton<ApiKeyMiddleware>();

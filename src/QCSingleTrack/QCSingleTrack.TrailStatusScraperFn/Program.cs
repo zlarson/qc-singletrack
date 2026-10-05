@@ -3,10 +3,9 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using QCSingleTrack.Infrastructure.Data;
 using QCSingleTrack.Application.Services;
 using QCSingleTrack.Application.Settings;
+using QCSingleTrack.Application.Storage;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -45,30 +44,12 @@ builder.Services.AddHttpClient("ScraperClient", (sp, client) =>
     client.DefaultRequestHeaders.TryAddWithoutValidation("Upgrade-Insecure-Requests", "1");
 });
 
-// EF Core: register DbContextFactory using a connection string from configuration
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrWhiteSpace(connectionString))
-{
-    // Fall back to env value used by Functions (Values section in local.settings.json)
-    connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
-}
-
-builder.Services.AddDbContextFactory<TrailStatusDbContext>(options =>
-{
-    options.UseSqlServer(connectionString, sqlOptions =>
-    {
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(10),
-            errorNumbersToAdd: null);
-
-        sqlOptions.CommandTimeout(60);
-    });
-});
+// Trails live in Azure Table Storage (Storage:ConnectionString for Azurite, or Storage:AccountName with managed identity)
+builder.Services.AddTrailTableStorage(builder.Configuration);
 
 // Application layer services
 builder.Services.AddScoped<ITrailScraper, AngleSharpTrailScraper>();
-builder.Services.AddScoped<ITrailService, TrailService>();
+builder.Services.AddScoped<ITrailService, TableTrailService>();
 
 //// Application Insights - worker service integration reads APPLICATIONINSIGHTS_CONNECTION_STRING env var
 builder.Services

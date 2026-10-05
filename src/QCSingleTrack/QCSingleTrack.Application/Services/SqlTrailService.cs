@@ -8,11 +8,15 @@ using QCSingleTrack.Infrastructure.Data;
 
 namespace QCSingleTrack.Application.Services;
 
-public class TrailService : ITrailService
+/// <summary>
+/// The original SQL Server (EF Core) store. Only the scraper console's --migrate command still uses it,
+/// to copy trails into Table Storage; it goes away with the SQL database.
+/// </summary>
+public class SqlTrailService : ITrailService
 {
     private readonly IDbContextFactory<TrailStatusDbContext> _dbFactory;
 
-    public TrailService(IDbContextFactory<TrailStatusDbContext> dbFactory)
+    public SqlTrailService(IDbContextFactory<TrailStatusDbContext> dbFactory)
     {
         _dbFactory = dbFactory;
     }

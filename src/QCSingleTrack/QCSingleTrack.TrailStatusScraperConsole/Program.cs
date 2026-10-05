@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using QCSingleTrack.Application.Services;
 using QCSingleTrack.Application.Settings;
+using QCSingleTrack.Application.Storage;
 using QCSingleTrack.Infrastructure.Data;
 using QCSingleTrack.TrailStatusScraperConsole;
 
@@ -12,12 +13,12 @@ using QCSingleTrack.TrailStatusScraperConsole;
 // (whose working directory defaults to C:\Windows\System32).
 var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
 {
-    Args = args,
+    // Command-line args are this tool's own commands (--migrate, --seed), not config overrides.
     ContentRootPath = AppContext.BaseDirectory,
 });
 
 // Host.CreateApplicationBuilder already loads appsettings.json, appsettings.{Environment}.json,
-// user secrets (Development only), environment variables and command-line args.
+// user secrets (Development only) and environment variables.
 builder.Configuration.AddUserSecrets<ScrapeJob>(optional: true);
 
 builder.Services
@@ -50,31 +51,32 @@ builder.Services.AddHttpClient("ScraperClient", (sp, client) =>
     client.DefaultRequestHeaders.TryAddWithoutValidation("Upgrade-Insecure-Requests", "1");
 });
 
-// EF Core: register DbContextFactory using a connection string from configuration
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrWhiteSpace(connectionString))
-{
-    Console.Error.WriteLine("ConnectionStrings:DefaultConnection is not configured.");
-    return 1;
-}
+// Trails live in Azure Table Storage: Storage:AccountName uses az login (DefaultAzureCredential);
+// Storage:ConnectionString (user secrets or Azurite) takes precedence when set.
+builder.Services.AddTrailTableStorage(builder.Configuration);
 
-builder.Services.AddDbContextFactory<TrailStatusDbContext>(options =>
+// --migrate copies trails from the old SQL database, so only it needs the SQL connection string.
+var migrate = args.Contains("--migrate");
+var sqlConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (migrate)
 {
-    options.UseSqlServer(connectionString, sqlOptions =>
+    if (string.IsNullOrWhiteSpace(sqlConnectionString))
     {
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(10),
-            errorNumbersToAdd: null);
+        Console.Error.WriteLine("--migrate needs ConnectionStrings:DefaultConnection for the SQL database.");
+        return 1;
+    }
 
-        sqlOptions.CommandTimeout(60);
-    });
-});
+    builder.Services.AddDbContextFactory<TrailStatusDbContext>(options =>
+        options.UseSqlServer(sqlConnectionString, sqlOptions => sqlOptions.EnableRetryOnFailure()));
+    builder.Services.AddScoped<SqlTrailService>();
+}
 
 // Application layer services
 builder.Services.AddScoped<ITrailScraper, AngleSharpTrailScraper>();
-builder.Services.AddScoped<ITrailService, TrailService>();
+builder.Services.AddScoped<TableTrailService>();
+builder.Services.AddScoped<ITrailService>(sp => sp.GetRequiredService<TableTrailService>());
 builder.Services.AddScoped<ScrapeJob>();
+builder.Services.AddScoped<DataCommands>();
 
 // Application Insights - reads APPLICATIONINSIGHTS_CONNECTION_STRING (env var or config); no-op if absent
 builder.Services.AddApplicationInsightsTelemetryWorkerService();
@@ -84,7 +86,25 @@ using var host = builder.Build();
 bool success;
 using (var scope = host.Services.CreateScope())
 {
-    success = await scope.ServiceProvider.GetRequiredService<ScrapeJob>().RunAsync();
+    var services = scope.ServiceProvider;
+    var seedIndex = Array.IndexOf(args, "--seed");
+    if (migrate)
+    {
+        success = await services.GetRequiredService<DataCommands>().MigrateFromSqlAsync(services.GetRequiredService<SqlTrailService>());
+    }
+    else if (seedIndex >= 0)
+    {
+        if (seedIndex + 1 >= args.Length)
+        {
+            Console.Error.WriteLine("Usage: --seed <trails.json>, where the file is saved output of GET /api/trails.");
+            return 1;
+        }
+        success = await services.GetRequiredService<DataCommands>().SeedFromApiJsonAsync(args[seedIndex + 1]);
+    }
+    else
+    {
+        success = await services.GetRequiredService<ScrapeJob>().RunAsync();
+    }
 }
 
 // Short-lived process: flush telemetry before exiting so it isn't lost
