@@ -32,6 +32,9 @@ export class MapService {
     // Standard OSM tiles, darkened in styles.css (.trail-map .leaflet-tile-pane).
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
+      // OSM blocks tile requests without a Referer. The hosted site sends `Referrer-Policy: same-origin`,
+      // which strips it from cross-origin requests, so override the policy on the tile images.
+      referrerPolicy: 'strict-origin-when-cross-origin',
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
 
