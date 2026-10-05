@@ -13,9 +13,6 @@ param apiClientKey string
 @description('Entra object ID of the person whose scheduled scraper writes trail statuses (signs in with az login).')
 param scraperUserObjectId string = 'a8e692be-63ec-4e90-9f5d-ebab9be06e39'
 
-@description('Log Analytics workspace behind Application Insights (Azure\'s default workspace, in another resource group).')
-param logAnalyticsWorkspaceId string = '/subscriptions/${subscription().subscriptionId}/resourcegroups/DefaultResourceGroup-CUS/providers/Microsoft.OperationalInsights/workspaces/DefaultWorkspace-${subscription().subscriptionId}-CUS'
-
 var domainName = 'qcbiketrails.com'
 var githubRepo = 'zlarson/qc-singletrack'
 
@@ -122,6 +119,22 @@ resource trailsTable 'Microsoft.Storage/storageAccounts/tableServices/tables@202
 
 // ---------- Monitoring ----------
 
+// Where Application Insights stores its data. It lives in this resource group on purpose: the original workspace
+// was in an auto-created resource group, and when that was deleted Application Insights silently stopped ingesting.
+resource logs 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
+  name: 'qc-singletrack-logs'
+  location: location
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+    retentionInDays: 30
+    workspaceCapping: {
+      dailyQuotaGb: json('0.1') // cost safety net; real traffic is a tiny fraction of this
+    }
+  }
+}
+
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: 'qc-singletrack-appinsights'
   location: location
@@ -131,8 +144,8 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
     Flow_Type: 'Redfield'
     Request_Source: 'IbizaAIExtension'
     RetentionInDays: 90
-    IngestionMode: 'Disabled'
-    WorkspaceResourceId: logAnalyticsWorkspaceId
+    IngestionMode: 'LogAnalytics'
+    WorkspaceResourceId: logs.id
     publicNetworkAccessForIngestion: 'Enabled'
     publicNetworkAccessForQuery: 'Enabled'
   }

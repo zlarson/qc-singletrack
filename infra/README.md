@@ -6,7 +6,7 @@
 - **API**: App Service plan `qc-singletrack-asp` (Free F1) and app `QCSingleTrackApi20251126134734`, with its managed identity and app settings
 - **Website**: Static Web App `qc-singletrack` (Free) with the `qcbiketrails.com` custom domain
 - **DNS** zone `qcbiketrails.com`
-- **Application Insights** `qc-singletrack-appinsights`
+- **Application Insights** `qc-singletrack-appinsights`, storing its data in Log Analytics workspace `qc-singletrack-logs` (30-day retention, 0.1 GB daily cap)
 - **GitHub deploy identity** `qcbiketrails-github-deploy`, trusted only for workflow runs on `main`
 - **Role assignments**: the API reads the Trails table, the scheduled scraper's user writes it, and the deploy identity deploys the API
 
