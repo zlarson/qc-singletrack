@@ -1,0 +1,46 @@
+name: API CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/QCSingleTrack/QCSingleTrack.Api/**'
+      - 'src/QCSingleTrack/QCSingleTrack.Application/**'
+      - 'src/QCSingleTrack/QCSingleTrack.Domain/**'
+      - 'src/QCSingleTrack/QCSingleTrack.Infrastructure.Data/**'
+      - '.github/workflows/api.yml'
+  workflow_dispatch:
+
+# OpenID Connect sign-in to Azure (azure/login) needs an ID token; no deployment secrets are stored.
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    name: Build and deploy API
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # appsettings.json is gitignored, so production config (Storage__AccountName, ApiKeys__ClientKey)
+      # comes from the App Service's app settings.
+      - name: Publish
+        run: dotnet publish src/QCSingleTrack/QCSingleTrack.Api -c Release -o "${{ runner.temp }}/api"
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: qcsingletrackapi20251126134734
+          package: ${{ runner.temp }}/api

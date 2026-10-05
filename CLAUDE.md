@@ -12,7 +12,7 @@ QC Bike Trails (repo name QC SingleTrack) shows live mountain-bike trail status 
 
 ## Commands
 
-Backend (solution file is `src/QCSingleTrack/QCSingleTrack.slnx`; projects target `net8.0`, built with the .NET 10 SDK):
+Backend (solution file is `src/QCSingleTrack/QCSingleTrack.slnx`; projects target `net10.0`, matching the API App Service's `DOTNETCORE|10.0` stack):
 
 ```bash
 dotnet build src/QCSingleTrack/QCSingleTrack.slnx
@@ -57,6 +57,6 @@ Angular 22 needs Node `^22.22.3 || ^24.15.0`. CI builds the app with Node 24 its
 - **Tailwind v4**: CSS-first config with no `tailwind.config.js`. Everything lives in `src/styles.css` (`@import 'tailwindcss'` plus an `@theme` block of design tokens such as `bg-ink`, `bg-card`, `text-dim`, `bg-brand` and `bg-status-*`), loaded through `@tailwindcss/postcss` in `.postcssrc.json`. The global stylesheet must stay `.css`, because Tailwind v4 does not support Sass.
 - **Dark only**: there is no light theme or theme toggle; don't add `dark:` variants. The brand green (`--color-brand`) matches the logo and is also the "open" status color. Status labels, colors and sorting live in `models/trail-status.ts`; a trail with no status (one FORC doesn't monitor, e.g. Credit Island) counts as open. The page background is a soft glow in `components/page-backdrop.component.ts`: brand green by default, tinted to the open trail's status color via `BackdropService`.
 - **Trail list routing**: `/` and `/trails/:id` both render `TrailListComponent`, and `SameComponentReuseStrategy` (in `app.routes.ts`) keeps it alive between them, so the route param alone opens or closes the details (a bottom sheet on phones, a side panel at `lg`). `CurrentStatus.LastScrapedTime` is only written when a status changes, so the UI uses it as "status since".
-- **Deployment**: `.github/workflows/azure-static-web-apps-*.yml` builds the Angular app with Node 24 in GitHub Actions (Oryx's Node versions lag Angular's requirement) and uploads the prebuilt output with `skip_app_build`, on pushes to `main` touching `src/**` or the workflow. The API and Function are deployed separately (not via this repo's CI).
+- **Deployment**: `.github/workflows/azure-static-web-apps-*.yml` builds the Angular app with Node 24 in GitHub Actions (Oryx's Node versions lag Angular's requirement) and uploads the prebuilt output with `skip_app_build`, on pushes to `main` touching `src/QCSingleTrack.Angular/**` or the workflow. `.github/workflows/api.yml` publishes the API with .NET 10 and deploys it to App Service `qcsingletrackapi20251126134734` on pushes touching the API, Application, Domain or Infrastructure.Data projects (or run it manually). It signs in to Azure with OpenID Connect via the `AZURE_CLIENT_ID`, `AZURE_TENANT_ID` and `AZURE_SUBSCRIPTION_ID` repo secrets. Because `appsettings.json` is gitignored, production config lives in the App Service's app settings (`Storage__AccountName`, `ApiKeys__ClientKey`). The scraper console is deployed by hand to `C:\Tools\QCScraper`; the Function isn't deployed.
 
 `docs/gemini-original-plan.md` holds the original design plan.
