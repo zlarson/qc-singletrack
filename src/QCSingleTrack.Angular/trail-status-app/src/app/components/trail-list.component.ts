@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, DestroyRef, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe, Location } from '@angular/common';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TrailService } from '../services/trail.service';
 import { MapService } from '../services/map.service';
@@ -33,6 +34,9 @@ export class TrailListComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly title = inject(Title);
+  /** The page title from index.html, restored when no trail is open. */
+  private readonly defaultTitle = this.title.getTitle();
 
   @ViewChild('map') private mapEl?: ElementRef<HTMLElement>;
 
@@ -73,6 +77,7 @@ export class TrailListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.title.setTitle(this.defaultTitle);
     this.backdrop.status.set(null);
     clearInterval(this.clockTimer);
     this.mapTimers.forEach(clearTimeout);
@@ -155,6 +160,7 @@ export class TrailListComponent implements OnInit, OnDestroy {
     if (this.routeTrailId === null) {
       this.openedFromList = false;
       this.sheetOpen = false;
+      this.title.setTitle(this.defaultTitle);
       this.backdrop.status.set(null);
       this.lockScroll(false);
       return;
@@ -172,6 +178,7 @@ export class TrailListComponent implements OnInit, OnDestroy {
     const changed = this.selectedTrail !== trail;
     this.selectedTrail = trail;
     this.sheetOpen = true;
+    this.title.setTitle(`${trail.trailName} | QCBikeTrails`);
     this.backdrop.status.set(statusOf(trail));
     this.lockScroll(!this.isDesktop());
     if (!changed) return;
