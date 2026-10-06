@@ -1,3 +1,4 @@
+using Azure.Core;
 using Azure.Data.Tables;
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
@@ -21,9 +22,10 @@ public static class TrailStorageServiceCollectionExtensions
 {
     /// <summary>
     /// Registers the trails <see cref="TableClient"/> from the "Storage" config section: a connection string
-    /// when one is set, otherwise the account name with <see cref="DefaultAzureCredential"/>.
+    /// when one is set, otherwise the account name with <paramref name="credential"/>, or <see cref="DefaultAzureCredential"/>
+    /// if none is given.
     /// </summary>
-    public static IServiceCollection AddTrailTableStorage(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddTrailTableStorage(this IServiceCollection services, IConfiguration configuration, TokenCredential? credential = null)
     {
         var options = configuration.GetSection("Storage").Get<StorageOptions>() ?? new StorageOptions();
 
@@ -34,7 +36,7 @@ public static class TrailStorageServiceCollectionExtensions
         }
         else if (!string.IsNullOrWhiteSpace(options.AccountName))
         {
-            client = new TableClient(new Uri($"https://{options.AccountName}.table.core.windows.net"), options.TableName, new DefaultAzureCredential());
+            client = new TableClient(new Uri($"https://{options.AccountName}.table.core.windows.net"), options.TableName, credential ?? new DefaultAzureCredential());
         }
         else
         {

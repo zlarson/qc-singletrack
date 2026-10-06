@@ -13,6 +13,16 @@
         <p class="mt-2 text-sm text-dim">
           {{ latestChange }}@if (latestChange && regionalRain) {<span> · </span>}{{ regionalRain }}
         </p>
+        @if (refreshing) {
+          <p class="mt-1 flex items-center gap-1.5 text-xs text-dim">
+            <i class="fa-solid fa-rotate animate-spin text-[10px]"></i> Updating…
+          </p>
+        } @else if (staleSince) {
+          <p class="mt-1 text-xs text-status-caution">
+            Showing statuses from {{ staleAge }}.
+            <button type="button" (click)="retry()" class="underline hover:text-paper">Try again</button>
+          </p>
+        }
       }
     </div>
 

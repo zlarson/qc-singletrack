@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,9 +50,10 @@ builder.Services.AddHttpClient("ScraperClient", (sp, client) =>
     client.DefaultRequestHeaders.TryAddWithoutValidation("Upgrade-Insecure-Requests", "1");
 });
 
-// Trails live in Azure Table Storage: Storage:AccountName uses az login (DefaultAzureCredential);
-// Storage:ConnectionString (user secrets or Azurite) takes precedence when set.
-builder.Services.AddTrailTableStorage(builder.Configuration);
+// Trails live in Azure Table Storage: Storage:AccountName signs in with az login; Storage:ConnectionString
+// (user secrets or Azurite) takes precedence when set. The console only runs on a PC, so it goes straight to the
+// Azure CLI instead of DefaultAzureCredential, which first probes for a managed identity that doesn't exist there.
+builder.Services.AddTrailTableStorage(builder.Configuration, new AzureCliCredential());
 
 // Application layer services
 builder.Services.AddScoped<ITrailScraper, AngleSharpTrailScraper>();

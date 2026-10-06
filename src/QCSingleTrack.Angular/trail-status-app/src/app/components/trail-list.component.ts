@@ -7,6 +7,7 @@ import { TrailService } from '../services/trail.service';
 import { MapService } from '../services/map.service';
 import { RegionalWeatherService } from '../services/regional-weather.service';
 import { BackdropService } from '../services/backdrop.service';
+import { cacheTrails, readCachedTrails } from '../services/trail-cache';
 import { TrailDto, TrailPhotoDto } from '../models/trail-dto.model';
 import { DayWeatherDto, WeatherDto } from '../models/weather-dto.model';
 import { byStatusThenName, statusDetail, statusDotClass, statusOf, statusSince, statusTextClass } from '../models/trail-status';
@@ -43,6 +44,12 @@ export class TrailListComponent implements OnInit, OnDestroy {
   trails: TrailDto[] = [];
   loading = true;
   error: string | null = null;
+  /** Fetching fresh statuses while the cached list from the last visit is showing. */
+  refreshing = false;
+  /** When the list on screen was saved, if it came from the cache and couldn't be refreshed. */
+  staleSince: Date | null = null;
+  /** When the list on screen was saved, if it came from the cache; null once fresh data has loaded. */
+  private listSavedAt: Date | null = null;
 
   selectedTrail: TrailDto | null = null;
   sheetOpen = false;
@@ -86,21 +93,50 @@ export class TrailListComponent implements OnInit, OnDestroy {
   }
 
   private loadTrails(): void {
-    this.loading = true;
     this.error = null;
+    this.staleSince = null;
+
+    // Paint last visit's list right away; the API can take a while to wake up.
+    const cached = this.trails.length === 0 ? readCachedTrails() : null;
+    if (cached) {
+      this.setTrails(cached.trails);
+      this.listSavedAt = cached.savedAt;
+    }
+    const showingList = this.trails.length > 0;
+    this.loading = !showingList;
+    this.refreshing = showingList;
+
     this.trailService.getTrails().subscribe({
       next: trails => {
-        this.trails = (trails || []).sort(byStatusThenName);
+        this.setTrails(trails || []);
+        this.listSavedAt = null;
+        cacheTrails(this.trails);
         this.loading = false;
-        this.applyRoute();
+        this.refreshing = false;
         this.loadRegionalWeather();
       },
       error: err => {
-        this.error = "Couldn't load trail status. Check your connection and try again.";
         this.loading = false;
+        this.refreshing = false;
+        if (this.trails.length > 0) {
+          // Keep showing what we have; label it if it came from a previous visit.
+          this.staleSince = this.listSavedAt;
+        } else {
+          this.error = "Couldn't load trail status. Check your connection and try again.";
+        }
         console.error('Error loading trails:', err);
       }
     });
+  }
+
+  /** Replaces the list, keeping the open trail open (as the same trail from the new data). */
+  private setTrails(trails: TrailDto[]): void {
+    this.trails = [...trails].sort(byStatusThenName);
+    if (this.selectedTrail) {
+      this.selectedTrail = this.trails.find(t => t.trailId === this.selectedTrail!.trailId) ?? this.selectedTrail;
+    }
+    this.loading = false;
+    this.applyRoute();
   }
 
   retry(): void {
@@ -111,6 +147,16 @@ export class TrailListComponent implements OnInit, OnDestroy {
 
   get openCount(): number {
     return this.trails.filter(t => statusOf(t) === 'Open').length;
+  }
+
+  /** How old the cached list is, e.g. "2 hours ago". */
+  get staleAge(): string {
+    if (!this.staleSince) return '';
+    const minutes = Math.max(1, Math.round((this.now.getTime() - this.staleSince.getTime()) / 60_000));
+    if (minutes < 60) return `${minutes} min ago`;
+    const hours = Math.round(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+    return this.relativeDay(this.staleSince);
   }
 
   /** The most recent status change, e.g. "Sunderbruch Park closed Oct 2". */
